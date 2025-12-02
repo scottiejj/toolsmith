@@ -8,7 +8,7 @@ sys.path.append('..')
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from utils import PREFIX_MULTI_AGENTS, load_config
-from agents import Reader, Planner, Developer, Reviewer, Summarizer
+from agents import Reader, Planner, Developer, Reviewer, Summarizer, Toolsmith
 from state import State
 
 class SOP:
@@ -30,6 +30,8 @@ class SOP:
     def _create_agent(self, agent_name: str):
         if agent_name == "Reader":
             agent = Reader('gpt-4o-mini', 'api')
+        elif agent_name == "Toolsmith":
+            agent = Toolsmith('gpt-4o', 'api')
         elif agent_name == "Planner":
             agent = Planner(self.model, 'api')
         elif agent_name == "Developer":

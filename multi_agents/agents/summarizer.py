@@ -41,41 +41,56 @@ class Summarizer(Agent):
         images_dir = f"{state.restore_dir}/images"
         if not os.path.exists(images_dir):
             return "There is no image in this phase."
-        else:
-            images = os.listdir(images_dir)
-        count_of_image = 0
-        for image in images:
-            if image.endswith('png'):
-                count_of_image += 1
-        if len(images) == 0 or count_of_image == 0:
+
+        allowed_ext = {".png", ".jpg", ".jpeg", ".gif", ".webp"}
+        all_entries = os.listdir(images_dir)
+        images = [
+            f for f in all_entries
+            if os.path.splitext(f)[1].lower() in allowed_ext
+        ]
+
+        if len(images) == 0:
             return "There is no image in this phase."
+
         images_str = "\n".join(images)
         num_of_chosen_images = min(5, len(images))
         chosen_images = []
-        input = PROMPT_SUMMARIZER_IMAGE_CHOOSE.format(phases_in_context=state.context, phase_name=state.phase, num=num_of_chosen_images+3, images=images_str)
+
+        input = PROMPT_SUMMARIZER_IMAGE_CHOOSE.format(
+            phases_in_context=state.context,
+            phase_name=state.phase,
+            num=num_of_chosen_images + 3,
+            images=images_str
+        )
         raw_reply, _ = self.llm.generate(input, [], max_completion_tokens=4096)
         with open(f'{state.restore_dir}/chosen_images_reply.txt', 'w') as f:
             f.write(raw_reply)
+
         try:
-            raw_chosen_images = self._parse_json(raw_reply)['images']
-            for image in raw_chosen_images:
-                if image in images:
-                    chosen_images.append(image)
-                    if len(chosen_images) == num_of_chosen_images:
-                        break
+            raw_chosen = self._parse_json(raw_reply).get("images", [])
         except Exception as e:
             logging.error(f"Error parsing JSON: {e}")
-            for image in images:
-                if image in raw_reply:
-                    chosen_images.append(image)
-                    if len(chosen_images) == num_of_chosen_images:
-                        break
+            raw_chosen = [im for im in images if im in raw_reply]
+
+        # Sanitize selection: enforce whitelist + existence + cap to N
+        seen = set()
+        for im in raw_chosen:
+            if im in images and im not in seen:
+                seen.add(im)
+                chosen_images.append(im)
+                if len(chosen_images) == num_of_chosen_images:
+                    break
+
+        if len(chosen_images) == 0:
+            chosen_images = images[:num_of_chosen_images]
 
         image_to_text_tool = ImageToTextTool(model='gpt-4o', type='api')
         images_to_descriptions = image_to_text_tool.image_to_text(state, chosen_images)
+
         insight_from_visualization = ""
         for image, description in images_to_descriptions.items():
             insight_from_visualization += f"## IMAGE: {image} ##\n{description}\n"
+
         with open(f'{state.restore_dir}/insight_from_visualization.txt', 'w') as f:
             f.write(insight_from_visualization)
 

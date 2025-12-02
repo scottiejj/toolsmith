@@ -1,230 +1,187 @@
-## fill_missing_values
+## handle_missing_values
 
-**Name:** fill_missing_values  
-**Description:** Fill missing values in specified columns of a DataFrame. This tool can handle both numerical and categorical features by using different filling methods.  
-**Applicable Situations:** handle missing values in various types of features
+**Name:** handle_missing_values  
+**Description:** Handle missing values in a specified column of the DataFrame.  
+**Applicable Situations:** fill missing values in a specific column
 
 **Parameters:**
-- `data`:
+- `df`:
   - **Type:** `pd.DataFrame`
-  - **Description:** A pandas DataFrame object representing the dataset.
-- `columns`:
-  - **Type:** ``string` | `array``
-  - **Description:** The name(s) of the column(s) where missing values should be filled.
-- `method`:
+  - **Description:** The input DataFrame.
+- `column`:
   - **Type:** `string`
-  - **Description:** The method to use for filling missing values.
-  - **Enum:** `auto` | `mean` | `median` | `mode` | `constant`
-  - **Default:** `auto`
-- `fill_value`:
-  - **Type:** ``number` | `string` | `null``
-  - **Description:** The value to use when method is 'constant'.
-  - **Default:** `None`
+  - **Description:** The column name to handle missing values.
+- `strategy`:
+  - **Type:** `string`
+  - **Description:** The strategy to use for imputation.
+  - **Enum:** `mean` | `median` | `most_frequent`
+  - **Default:** `mean`
 
-**Required:** `data`, `columns`  
-**Result:** Successfully fill missing values in the specified column(s) of data  
+**Required:** `df`, `column`  
+**Result:** Successfully handle missing values in the specified column  
 **Notes:**
-- The 'auto' method uses mean for numeric columns and mode for non-numeric columns.
-- Using 'mean' or 'median' on non-numeric columns will raise an error.
-- The 'mode' method uses the most frequent value, which may not always be appropriate.
-- Filling missing values can introduce bias, especially if the data is not missing completely at random.
-- Consider the impact of filling missing values on your analysis and model performance.
+- If the column does not exist, a ValueError is raised.
+- The strategy must be one of the specified options.
+- The imputation method will modify the DataFrame in place.
 
 ---
-## remove_columns_with_missing_data
 
-**Name:** remove_columns_with_missing_data  
-**Description:** Remove columns containing excessive missing values from a DataFrame based on a threshold. This tool provides a flexible way to clean datasets by removing columns with too many missing values, adaptable to different dataset sizes.  
-**Applicable Situations:** remove columns with excessive missing values from a dataset
+## remove_outliers
 
-**Parameters:**
-- `data`:
-  - **Type:** `pd.DataFrame`
-  - **Description:** A pandas DataFrame object representing the dataset.
-- `thresh`:
-  - **Type:** `number`
-  - **Description:** The minimum proportion of missing values required to drop a column. Should be between 0 and 1.
-  - **Default:** `0.5`
-- `columns`:
-  - **Type:** ``string` | `array` | `null``
-  - **Description:** Labels of columns to consider. If not specified, all columns will be considered.
-  - **Default:** `None`
-
-**Required:** `data`  
-**Result:** Successfully remove columns containing excessive missing values from the DataFrame  
-**Notes:**
-- This method modifies the structure of your dataset by removing entire columns.
-- Setting a low threshold might result in loss of important features.
-- Setting a high threshold might retain columns with too many missing values.
-- Consider the impact of removing columns on your analysis and model performance.
-- It's often better to understand why data is missing before deciding to remove it.
-
----
-## detect_and_handle_outliers_zscore
-
-**Name:** detect_and_handle_outliers_zscore  
-**Description:** Detect and handle outliers in specified columns using the Z-score method. This tool is useful for identifying and managing extreme values in numerical features based on their distance from the mean in terms of standard deviations.  
-**Applicable Situations:** detect and handle outliers in numerical features, especially when the data is approximately normally distributed and the sample size is large
+**Name:** remove_outliers  
+**Description:** Remove outliers from a specified column using the IQR method.  
+**Applicable Situations:** clean data by eliminating outliers from a numerical feature
 
 **Parameters:**
-- `data`:
+- `df`:
   - **Type:** `pd.DataFrame`
-  - **Description:** A pandas DataFrame object representing the dataset.
-- `columns`:
-  - **Type:** ``string` | `array``
-  - **Description:** The name(s) of the column(s) to check for outliers.
+  - **Description:** The input DataFrame.
+- `column`:
+  - **Type:** `string`
+  - **Description:** The column name to check for outliers.
 - `threshold`:
-  - **Type:** `number`
-  - **Description:** The Z-score threshold to identify outliers. Values with absolute Z-scores above this threshold are considered outliers. Typically 3.0 or 2.5.
-  - **Default:** `3.0`
-- `method`:
-  - **Type:** `string`
-  - **Description:** The method to handle outliers.
-  - **Enum:** `clip` | `remove`
-  - **Default:** `clip`
-
-**Required:** `data`, `columns`  
-**Result:** Successfully detect and handle outliers in the specified column(s) of data  
-**Notes:**
-- This method assumes the data is approximately normally distributed.
-- It may be sensitive to extreme outliers as they can affect the mean and standard deviation.
-- Not suitable for highly skewed distributions.
-- The choice of threshold affects the sensitivity of outlier detection.
-
----
-## detect_and_handle_outliers_iqr
-
-**Name:** detect_and_handle_outliers_iqr  
-**Description:** Detect and handle outliers in specified columns using the Interquartile Range (IQR) method. This tool is useful for identifying and managing extreme values in numerical features without assuming a specific distribution of the data.  
-**Applicable Situations:** detect and handle outliers in numerical features, especially when the data distribution is unknown, non-normal, or when the dataset is small or contains extreme outliers
-
-**Parameters:**
-- `data`:
-  - **Type:** `pd.DataFrame`
-  - **Description:** A pandas DataFrame object representing the dataset.
-- `columns`:
-  - **Type:** ``string` | `array``
-  - **Description:** The name(s) of the column(s) to check for outliers.
-- `factor`:
-  - **Type:** `number`
-  - **Description:** The IQR factor to determine the outlier threshold. Typically 1.5 for outliers or 3 for extreme outliers.
+  - **Type:** `float`
+  - **Description:** The multiplier for the IQR to define outliers.
   - **Default:** `1.5`
-- `method`:
-  - **Type:** `string`
-  - **Description:** The method to handle outliers.
-  - **Enum:** `clip` | `remove`
-  - **Default:** `clip`
-- `return_mask`:
-  - **Type:** `boolean`
-  - **Description:** If True, return a boolean mask indicating outliers instead of removing them.
-  - **Default:** `False`
 
-**Required:** `data`, `columns`  
-**Result:** Successfully detect and handle outliers in the specified column(s) of data using the IQR method  
+**Required:** `df`, `column`  
+**Result:** DataFrame with outliers removed from the specified column  
 **Notes:**
-- This method does not assume any specific data distribution.
-- It is less sensitive to extreme outliers compared to the Z-score method.
-- May be less precise for normally distributed data compared to the Z-score method.
-- The choice of factor affects the range of what is considered an outlier.
-- Using the 'remove' method may delete data entries, which is not recommended for test sets.
+- If the column does not exist or is not numerical, a ValueError is raised.
+- Outliers are defined as points beyond the lower and upper bounds calculated from the IQR.
 
 ---
-## convert_data_types
 
-**Name:** convert_data_types  
-**Description:** Convert the data type of specified columns in a DataFrame. This tool is useful for ensuring data consistency and preparing data for analysis or modeling.  
-**Applicable Situations:** data type conversion, data preprocessing, ensuring data consistency across columns
+## convert_column_to_datetime
+
+**Name:** convert_column_to_datetime  
+**Description:** Convert a specified column to datetime format.  
+**Applicable Situations:** convert string dates to datetime objects for analysis
 
 **Parameters:**
-- `data`:
+- `df`:
   - **Type:** `pd.DataFrame`
-  - **Description:** A pandas DataFrame object representing the dataset.
-- `columns`:
-  - **Type:** ``string` | `array``
-  - **Description:** Column label or sequence of labels to convert.
-- `target_type`:
+  - **Description:** The input DataFrame.
+- `column`:
   - **Type:** `string`
-  - **Description:** The target data type to convert to.
-  - **Enum:** `int` | `float` | `str` | `bool` | `datetime`
-
-**Required:** `data`, `columns`, `target_type`  
-**Result:** Successfully convert the data type of specified column(s) in the DataFrame  
-**Notes:**
-- For 'int' and 'float' conversions, non-numeric values will be converted to NaN.
-- The 'int' conversion uses the 'Int64' type, which supports NaN values.
-- The 'datetime' conversion will set invalid date/time values to NaT (Not a Time).
-- The 'bool' conversion may produce unexpected results for non-boolean data.
-- Consider the impact of type conversion on your data analysis and model performance.
-- Always verify the results after conversion to ensure data integrity.
-
----
-## remove_duplicates
-
-**Name:** remove_duplicates  
-**Description:** Remove duplicate rows from a DataFrame. This tool provides flexible options for identifying and handling duplicate entries in a dataset.  
-**Applicable Situations:** remove duplicate entries from a dataset, especially when dealing with data that may have been entered multiple times or when consolidating data from multiple sources
-
-**Parameters:**
-- `data`:
-  - **Type:** `pd.DataFrame`
-  - **Description:** A pandas DataFrame object representing the dataset.
-- `columns`:
-  - **Type:** ``string` | `array` | `null``
-  - **Description:** Column label or sequence of labels to consider for identifying duplicates. If None, use all columns.
-  - **Default:** `None`
-- `keep`:
-  - **Type:** `string`
-  - **Description:** Determines which duplicates (if any) to keep.
-  - **Enum:** `first` | `last` | `False`
-  - **Default:** `first`
-- `inplace`:
-  - **Type:** `boolean`
-  - **Description:** Whether to drop duplicates in place or return a copy.
-  - **Default:** `False`
-
-**Required:** `data`  
-**Result:** Successfully remove duplicate rows from the DataFrame  
-**Notes:**
-- If 'columns' is None, all columns are used for identifying duplicates.
-- The 'keep' parameter determines which duplicate rows are retained.
-- Setting 'inplace' to True will modify the original DataFrame.
-- Be cautious when removing duplicates, as it may affect the integrity of your dataset.
-- Consider the impact of removing duplicates on your analysis and model performance.
-- This method is useful for data cleaning, but make sure you understand why duplicates exist before removing them.
-
----
-## format_datetime
-
-**Name:** format_datetime  
-**Description:** Format datetime columns in a DataFrame to a specified format. This tool is useful for standardizing date and time representations across your dataset.  
-**Applicable Situations:** datetime standardization, data preprocessing, ensuring consistent datetime formats
-
-**Parameters:**
-- `data`:
-  - **Type:** `pd.DataFrame`
-  - **Description:** A pandas DataFrame object representing the dataset.
-- `columns`:
-  - **Type:** ``string` | `array``
-  - **Description:** Column label or sequence of labels to format.
+  - **Description:** The column name to convert.
 - `format`:
   - **Type:** `string`
-  - **Description:** The desired output format for datetime.
-  - **Default:** `%Y-%m-%d %H:%M:%S`
-- `errors`:
-  - **Type:** `string`
-  - **Description:** How to handle parsing errors.
-  - **Enum:** `raise` | `coerce` | `ignore`
-  - **Default:** `coerce`
+  - **Description:** The format string for datetime conversion.
+  - **Default:** `None`
 
-**Required:** `data`, `columns`  
-**Result:** Successfully format the datetime columns in the DataFrame  
+**Required:** `df`, `column`  
+**Result:** Successfully convert the specified column to datetime format  
 **Notes:**
-- The method first converts the specified columns to datetime using pd.to_datetime before formatting.
-- The 'format' parameter uses Python's strftime and strptime format codes.
-- When 'errors' is set to 'coerce', invalid parsing will be set to NaT (Not a Time).
-- When 'errors' is set to 'ignore', invalid parsing will return the input.
-- When 'errors' is set to 'raise', invalid parsing will raise an exception.
-- Ensure that the specified format matches the expected datetime structure in your data.
-- Consider the impact of datetime formatting on your data analysis and model performance.
+- If the column does not exist, a ValueError is raised.
+- Invalid date formats will be coerced to NaT (Not a Time).
 
 ---
+
+## fill_categorical_with_mode
+
+**Name:** fill_categorical_with_mode  
+**Description:** Fill missing values in a categorical column with the mode.  
+**Applicable Situations:** handle missing values in categorical features
+
+**Parameters:**
+- `df`:
+  - **Type:** `pd.DataFrame`
+  - **Description:** The input DataFrame.
+- `column`:
+  - **Type:** `string`
+  - **Description:** The column name to fill.
+
+**Required:** `df`, `column`  
+**Result:** Column with missing values filled with the mode  
+**Notes:**
+- If the column does not exist or is not categorical, a ValueError is raised.
+- The mode is calculated based on the most frequent value in the column.
+
+---
+
+## plot_missing_data_heatmap
+
+**Name:** plot_missing_data_heatmap  
+**Description:** Plot a heatmap of missing data in the DataFrame.  
+**Applicable Situations:** visualize the distribution of missing values in the dataset
+
+**Parameters:**
+- `df`:
+  - **Type:** `pd.DataFrame`
+  - **Description:** The input DataFrame.
+
+**Required:** `df`  
+**Result:** Displays a heatmap of missing values  
+**Notes:**
+- This function does not return any value; it directly plots the heatmap.
+- Ensure that the DataFrame is not empty to avoid plotting errors.
+
+---
+
+## standardize_column
+
+**Name:** standardize_column  
+**Description:** Standardize a specified numerical column to have a mean of 0 and standard deviation of 1.  
+**Applicable Situations:** prepare numerical features for modeling by standardizing
+
+**Parameters:**
+- `df`:
+  - **Type:** `pd.DataFrame`
+  - **Description:** The input DataFrame.
+- `column`:
+  - **Type:** `string`
+  - **Description:** The column name to standardize.
+
+**Required:** `df`, `column`  
+**Result:** The standardized column  
+**Notes:**
+- If the column does not exist or is not numerical, a ValueError is raised.
+- Standardization modifies the DataFrame in place.
+
+---
+
+## encode_categorical
+
+**Name:** encode_categorical  
+**Description:** Encode a categorical column into numerical format using one-hot encoding.  
+**Applicable Situations:** convert categorical features into a usable format for modeling
+
+**Parameters:**
+- `df`:
+  - **Type:** `pd.DataFrame`
+  - **Description:** The input DataFrame.
+- `column`:
+  - **Type:** `string`
+  - **Description:** The column name to encode.
+
+**Required:** `df`, `column`  
+**Result:** DataFrame with the encoded column  
+**Notes:**
+- If the column does not exist, a ValueError is raised.
+- One-hot encoding will drop the first category to avoid multicollinearity.
+
+---
+
+## fix_inconsistent_categories
+
+**Name:** fix_inconsistent_categories  
+**Description:** Fix inconsistent categories in a specified categorical column.  
+**Applicable Situations:** standardize categorical values to ensure consistency
+
+**Parameters:**
+- `df`:
+  - **Type:** `pd.DataFrame`
+  - **Description:** The input DataFrame.
+- `column`:
+  - **Type:** `string`
+  - **Description:** The column name to fix.
+- `inconsistent_values`:
+  - **Type:** `dict`
+  - **Description:** A dictionary mapping inconsistent values to the correct value.
+
+**Required:** `df`, `column`, `inconsistent_values`  
+**Result:** The column with fixed categories  
+**Notes:**
+- If the column does not exist, a ValueError is raised.
+- Inconsistent values will be replaced in the DataFrame in place.
