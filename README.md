@@ -24,45 +24,7 @@ AutoKaggle is a powerful framework that assists data scientists in completing da
 - **Comprehensive Reporting**: Detailed documentation of workflow and decision-making processes.
 
 
-## Quick Start 
-
-### Set Environment
-
-1. Clone the repository
-```bash
-git clone https://github.com/multimodal-art-projection/AutoKaggle.git
-```
-
-2. Create and activate conda environment
-```bash
-conda create -n AutoKaggle-toolsmith python=3.11
-conda activate AutoKaggle-toolsmith
-```
-
-3. Install dependencies
-```bash
-pip install -r requirements.txt
-```
-
-4. Configure OpenAI API
-Create `api_key.txt` with:
-```
-sk-xxx                           # Your API key
-https://api.openai.com/v1       # Base URL
-```
-
-### Data Preparation
-
-AutoKaggle supports evaluation of Tabular-type datasets from Kaggle. Please Place competition data in `./multi_agents/competition/` with the following structure:
-```
-competition/
-├── train.csv
-├── test.csv
-├── sample_submission.csv
-└── overview.txt                 # Competition overview and data description
-```
-
-overview.txt: Copy and paste the Overview and Data sections from the Kaggle competition homepage into this file. The `Reader` will read this file to summarize relevant information.
+### Example output under EXAMPLE TOOLSMITH OUTPUT
 
 ### Running
 
@@ -83,3 +45,4 @@ bash run_multi_agents1.sh
 
 - **Model Configuration**
   - Supports `gpt-4o/gpt-4.1` for `Toolsmith`/`Planner`/`Developer`; configure in the run script or `multi_agents/sop.py`.
+
