@@ -1,0 +1,70 @@
+## PLAN
+
+### STEP 1
+Task: Prepare Modeling Data Matrices (Feature Selection & Consistency)
+Tools, involved features and correct parameters:
+- Tools: Pandas for DataFrame manipulation and type checking.
+- Involved Features:
+  - For `processed_train.csv`: Separate `y = NObeyesdad`. Drop `id`, `NObeyesdad`.
+  - For `processed_test.csv`: Drop `id`.
+  - Ensure train and test feature columns are identical, both in order and data type.
+  - Retain only numeric and one-hot encoded features. Exclude any string/categorical columns not already encoded (e.g., drop `BMI_category` string, keep `BMI_category_*` one-hots).
+  - Final feature set includes all engineered, standardized, and one-hot columns except `id` and `NObeyesdad`.
+Expected output or Impact on data:
+- X_train, y_train (for modeling) and X_test (for prediction), with identical feature sets.
+- Printed list of final feature columns and their types.
+Constraints:
+- No feature engineering, encoding, or alteration—use only existing processed features.
+- Do not modify source files; work on copies.
+
+### STEP 2
+Task: Model Training and Cross-Validation (Up to 3 Models)
+Tools, involved features and correct parameters:
+- Tools: Provided functions (`fit_and_evaluate_logistic_regression`, `fit_and_evaluate_random_forest`, `fit_and_evaluate_svc`), `obesity_grouped_stratified_kfold`.
+- Involved Features: Use all features from STEP 1 for every model.
+- Parameters:
+  - Logistic Regression: `cv=5`, `solver='liblinear'`, `max_iter=500`, `random_state=42`
+  - Random Forest: `cv=5`, `n_estimators=100`, `random_state=42`
+  - SVC: `cv=5`, `kernel='rbf'`, `C=1.0`, `gamma='scale'`, `random_state=42`
+  - Stratified cross-validation for all models.
+Expected output or Impact on data:
+- Cross-validated accuracy and macro-F1 for each model (mean and std).
+- Printed table summarizing results for all models.
+Constraints:
+- Train a maximum of three models.
+- Use same feature set for all models.
+- No feature selection, tuning, or engineering during this step.
+
+### STEP 3
+Task: Final Model Selection & Test Set Prediction
+Tools, involved features and correct parameters:
+- Tools: Fitted estimators from STEP 2, `obesity_prediction_calibrator`, `soft_voting_ensemble_predict`.
+- Involved Features: Use same feature set as STEP 2.
+- Parameters:
+  - Select model with highest mean CV accuracy.
+  - Retrain selected model on full training data.
+  - For probabilistic models, use `.predict_proba()` and map to labels using `obesity_prediction_calibrator`.
+  - If two models are very close in performance, optionally create a soft-voting ensemble of their predictions.
+Expected output or Impact on data:
+- Predicted `NObeyesdad` classes for all test set rows.
+- Printed class distribution for test predictions.
+Constraints:
+- Use only the top-performing model or ensemble (if justified).
+- Do not change features or retrain with a different feature set.
+
+### STEP 4
+Task: Submission File Generation and Sanity Checks
+Tools, involved features and correct parameters:
+- Tools: `obesity_submission_formatter`, Pandas.
+- Involved Features: Use test set `id` and predicted `NObeyesdad`.
+- Parameters:
+  - Format predictions into a DataFrame with columns `id` and `NObeyesdad`.
+  - Check that all test IDs are present and predictions match test set size.
+  - Print value counts for predicted classes.
+  - Save output as `submission.csv`.
+Expected output or Impact on data:
+- Submission-ready CSV file in the correct format.
+- Printed confirmation of sanity checks (row count, class labels, format).
+Constraints:
+- Do not alter predictions after file generation.
+- Ensure strict compliance with competition submission format.

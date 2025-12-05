@@ -1,0 +1,124 @@
+Numerical feature summary stratified by obesity class:
+            NObeyesdad   Age_mean   Age_std  ...    BMI_max  BMI_median  BMI_count
+0  Insufficient_Weight  19.359997  2.207979  ...  36.778115   17.506390       2523
+1        Normal_Weight  20.816465  3.326293  ...  32.882414   22.038567       3082
+2       Obesity_Type_I  24.960129  7.066876  ...  45.696997   32.121386       2910
+3      Obesity_Type_II  27.699213  4.242779  ...  45.696997   36.378753       3248
+4     Obesity_Type_III  24.126847  2.575766  ...  45.696997   41.750620       4046
+5   Overweight_Level_I  22.966269  5.530500  ...  35.555556   25.963757       2427
+6  Overweight_Level_II  25.692442  6.776821  ...  36.741456   28.020083       2522
+
+[7 rows x 55 columns]
+
+ANOVA/Kruskal-Wallis test results for numerical features vs. target:
+  feature   test          stat        p_value  significant
+0     Age  anova   1048.952377   0.000000e+00         True
+1  Height  anova    756.014952   0.000000e+00         True
+2  Weight  anova  24258.198090   0.000000e+00         True
+3    FCVC  anova   1551.918278   0.000000e+00         True
+4     NCP  anova    300.259705   0.000000e+00         True
+5    CH2O  anova    385.818727   0.000000e+00         True
+6     FAF  anova    282.714681   0.000000e+00         True
+7     TUE  anova    147.188575  1.424955e-183         True
+8     BMI  anova  50267.539112   0.000000e+00         True
+
+Categorical feature summary:
+                          feature  n_unique  ... top_count  n_missing
+0                          Gender         2  ...     10422          0
+1  family_history_with_overweight         2  ...     17014          0
+2                            FAVC         2  ...     18982          0
+3                            CAEC         4  ...     17529          0
+4                           SMOKE         2  ...     20513          0
+5                             SCC         2  ...     20071          0
+6                            CALC         3  ...     15066          0
+7                          MTRANS         5  ...     16687          0
+
+[8 rows x 5 columns]
+
+Chi2 association between categorical features and target:
+                          feature         chi2        p_value  dof  significant
+0                          Gender  7953.767544   0.000000e+00    6         True
+1  family_history_with_overweight  6423.317091   0.000000e+00    6         True
+2                            FAVC  1553.629751   0.000000e+00    6         True
+3                            CAEC  6897.329566   0.000000e+00   18         True
+4                           SMOKE   216.300613   6.396982e-44    6         True
+5                             SCC  1024.798467  3.870103e-218    6         True
+6                            CALC  4013.082706   0.000000e+00   12         True
+7                          MTRANS  2349.082568   0.000000e+00   24         True
+
+BMI statistics by obesity class (excluding BMI outliers):
+            NObeyesdad       mean       std  ...        max     median  count
+0  Insufficient_Weight  17.651733  1.269439  ...  36.778115  17.506390   2523
+1        Normal_Weight  22.003144  2.187854  ...  32.882414  22.038567   3082
+2       Obesity_Type_I  32.154221  2.511065  ...  45.696997  32.121386   2910
+3      Obesity_Type_II  36.521796  2.111815  ...  45.696997  36.378753   3248
+4     Obesity_Type_III  41.674694  2.424485  ...  45.696997  41.750620   4046
+5   Overweight_Level_I  26.059418  1.767850  ...  35.555556  25.963757   2427
+6  Overweight_Level_II  28.192491  1.835666  ...  36.741456  28.020083   2522
+
+[7 rows x 7 columns]
+
+Obesity class prevalence by FAVC:
+NObeyesdad  Insufficient_Weight  ...  Overweight_Level_II
+FAVC                             ...                     
+no                     0.208333  ...             0.303491
+yes                    0.113423  ...             0.104467
+
+[2 rows x 7 columns]
+
+Obesity class prevalence by SMOKE:
+NObeyesdad  Insufficient_Weight  ...  Overweight_Level_II
+SMOKE                            ...                     
+no                     0.122654  ...             0.121728
+yes                    0.028571  ...             0.102041
+
+[2 rows x 7 columns]
+
+Obesity class prevalence by SCC:
+NObeyesdad  Insufficient_Weight  ...  Overweight_Level_II
+SCC                              ...                     
+no                     0.114145  ...             0.124458
+yes                    0.337700  ...             0.034934
+
+[2 rows x 7 columns]
+
+Obesity class prevalence by MTRANS:
+NObeyesdad             Insufficient_Weight  ...  Overweight_Level_II
+MTRANS                                      ...                     
+Automobile                        0.078381  ...             0.221279
+Bike                              0.062500  ...             0.125000
+Motorbike                         0.105263  ...             0.078947
+Public_transportation             0.129802  ...             0.098819
+Walking                           0.158458  ...             0.179872
+
+[5 rows x 7 columns]
+
+Obesity class prevalence by CAEC:
+NObeyesdad  Insufficient_Weight  ...  Overweight_Level_II
+CAEC                             ...                     
+Always                 0.073222  ...             0.069038
+Frequently             0.490291  ...             0.084951
+No                     0.028674  ...             0.021505
+Sometimes              0.072337  ...             0.129671
+
+[4 rows x 7 columns]
+
+Generating correlation heatmap for numerical features...
+Correlation heatmap saved to: /Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/deep_eda/images/correlation_heatmap_numerical_features.png
+
+Strongest absolute correlations among numerical features:
+BMI     Weight    0.941348
+Weight  BMI       0.941348
+        Height    0.415763
+Height  Weight    0.415763
+BMI     Age       0.340324
+dtype: float64
+
+Boxplot for Age stratified by obesity class:
+Boxplot saved to: /Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/deep_eda/images/boxplot_Age_vs_obesity_class.png
+
+Boxplot for Height stratified by obesity class:
+Boxplot saved to: /Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/deep_eda/images/boxplot_Height_vs_obesity_class.png
+
+Boxplot for Weight stratified by obesity class:
+Boxplot saved to: /Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/deep_eda/images/boxplot_Weight_vs_obesity_class.png

@@ -13,12 +13,16 @@ import sys
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run SOP for a competition.')
     parser.add_argument('--competition', type=str, default='titanic', help='Competition name')
-    parser.add_argument('--model', type=str, default='gpt_4o', help='Model name')
+    parser.add_argument('--model_planner', type=str, default='gpt_4o', help='Model name for planner')
+    parser.add_argument('--model_toolsmith', type=str, default='gpt_4o', help='Model name for toolsmith')
+    parser.add_argument('--model_developer', type=str, default='gpt_4o', help='Model name for developer')
     args = parser.parse_args()
     competition = args.competition
-    model = args.model
+    model_planner = args.model_planner
+    model_toolsmith = args.model_toolsmith
+    model_developer = args.model_developer
 
-    sop = SOP(competition, model)
+    sop = SOP(competition, model_planner, model_toolsmith, model_developer)
     start_state = State(phase="Understand Background", competition=competition)
     start_message = ""
     new_state = start_state
@@ -43,6 +47,7 @@ if __name__ == '__main__':
     while True:
         current_state = new_state
         exec_state_info, new_state = sop.step(state=current_state)
+        root_logger.info(f"Current phase '{current_state.phase}' tools: {current_state.ml_tools}")
         if exec_state_info == 'Fail':
             logging.error("Failed to update state.")
             exit()

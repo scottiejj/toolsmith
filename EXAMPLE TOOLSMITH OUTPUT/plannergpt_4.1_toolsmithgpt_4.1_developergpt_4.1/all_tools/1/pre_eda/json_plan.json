@@ -1,0 +1,76 @@
+[
+    {
+        "task": "Summarize and audit feature types, basic statistics, unique values, and missingness for all features in both train and test datasets.",
+        "tools, involved features and correct parameters": [
+            "summarize_numerical_features for numerical features (Age, Height, Weight, FCVC, NCP, CH2O, FAF, TUE)",
+            "summarize_categorical_features for categorical features (Gender, family_history_with_overweight, FAVC, CAEC, SMOKE, SCC, CALC, MTRANS, NObeyesdad [train only])",
+            "Pandas .is_unique and .isnull().sum() for id column",
+            "Use both train and test dataframes"
+        ],
+        "expected output or impact on data": [
+            "Text tables summarizing statistics, unique values, and missing counts for each feature group",
+            "Text summary on id column uniqueness and missingness",
+            "No changes to data; purely descriptive"
+        ],
+        "constraints": [
+            "No data modification",
+            "Use only text/print outputs for summaries"
+        ]
+    },
+    {
+        "task": "Analyze initial distributions for all features to identify basic patterns and spot potential data entry errors or outliers.",
+        "tools, involved features and correct parameters": [
+            "plot_numerical_distributions for numerical features (Age, Height, Weight, FCVC, NCP, CH2O, FAF, TUE) with parameters: no target hue, n_cols=3, figsize=(16, 8)",
+            "plot_categorical_counts for categorical features (Gender, family_history_with_overweight, FAVC, CAEC, SMOKE, SCC, CALC, MTRANS) with parameters: n_cols=3, figsize=(16, 8)",
+            "Use train data primarily; test data if feasible"
+        ],
+        "expected output or impact on data": [
+            "Histograms for numerical features and countplots for categorical features (max 10 images in total)",
+            "Descriptions before each plot",
+            "No changes to data; visual inspection only"
+        ],
+        "constraints": [
+            "Limit to 10 total images",
+            "Focus on critical, representative plots"
+        ]
+    },
+    {
+        "task": "Detect and quantify outliers and check consistency of numerical features (including BMI).",
+        "tools, involved features and correct parameters": [
+            "automated_outlier_detector for numerical features (Age, Height, Weight, FCVC, NCP, CH2O, FAF, TUE) with parameters: method='iqr', threshold=1.5",
+            "bmi_feature_analysis for BMI calculation using Height and Weight columns",
+            "Apply to train and test data"
+        ],
+        "expected output or impact on data": [
+            "Text tables with outlier counts and ratios for each numerical feature",
+            "BMI summary statistics (mean, std, min, max, quartiles)",
+            "Text report flagging implausible BMI values",
+            "No changes to data; purely diagnostic"
+        ],
+        "constraints": [
+            "No correction or removal of data",
+            "All outputs in text except for BMI summary if plot is critical (counted in image quota)"
+        ]
+    },
+    {
+        "task": "Assess target variable distribution and its relationship with key features in train data.",
+        "tools, involved features and correct parameters": [
+            "analyze_target_distribution for NObeyesdad",
+            "feature_vs_target_boxplot for Age, Weight, Height, and BMI vs. NObeyesdad, one plot per feature, figsize=(8, 5)",
+            "Pandas crosstab for Gender vs. NObeyesdad",
+            "Use train data only"
+        ],
+        "expected output or impact on data": [
+            "Text table of target class counts and proportions",
+            "Up to 4 boxplots (key numerical features vs. target, within image quota)",
+            "Crosstab of Gender vs. target (text)",
+            "Descriptions before each output",
+            "No data changes; foundational understanding of target and its relationships"
+        ],
+        "constraints": [
+            "Do not exceed 10 total images (across all steps)",
+            "Prioritize boxplots for BMI and Weight if image quota is tight",
+            "No deep association or multivariate analysis at this stage"
+        ]
+    }
+]

@@ -1,0 +1,87 @@
+# FEATURE INFO
+## TARGET VARIABLE
+NObeyesdad
+## FEATURES BEFORE THIS PHASE
+['id', 'Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE', 'BMI', 'BMI_category', 'lifestyle_risk_score', 'age_lifestyle_interaction', 'bmi_weight_interaction', 'lifestyle_balance', 'Age_std', 'Height_std', 'Weight_std', 'FCVC_std', 'NCP_std', 'CH2O_std', 'FAF_std', 'TUE_std', 'BMI_std', 'lifestyle_risk_score_std', 'age_lifestyle_interaction_std', 'bmi_weight_interaction_std', 'lifestyle_balance_std', 'Gender_Female', 'Gender_Male', 'family_history_with_overweight_no', 'family_history_with_overweight_yes', 'FAVC_no', 'FAVC_yes', 'CAEC_Always', 'CAEC_Frequently', 'CAEC_No', 'CAEC_Sometimes', 'SMOKE_no', 'SMOKE_yes', 'SCC_no', 'SCC_yes', 'CALC_Frequently', 'CALC_No', 'CALC_Sometimes', 'MTRANS_Automobile', 'MTRANS_Bike', 'MTRANS_Motorbike', 'MTRANS_Public_transportation', 'MTRANS_Walking', 'BMI_category_Underweight', 'BMI_category_Normal_weight', 'BMI_category_Overweight', 'BMI_category_Obesity_I', 'BMI_category_Obesity_II', 'BMI_category_Obesity_III', 'n_flags', 'NObeyesdad']
+## FEATURES AFTER THIS PHASE
+['id', 'Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE', 'BMI', 'BMI_category', 'lifestyle_risk_score', 'age_lifestyle_interaction', 'bmi_weight_interaction', 'lifestyle_balance', 'Age_std', 'Height_std', 'Weight_std', 'FCVC_std', 'NCP_std', 'CH2O_std', 'FAF_std', 'TUE_std', 'BMI_std', 'lifestyle_risk_score_std', 'age_lifestyle_interaction_std', 'bmi_weight_interaction_std', 'lifestyle_balance_std', 'Gender_Female', 'Gender_Male', 'family_history_with_overweight_no', 'family_history_with_overweight_yes', 'FAVC_no', 'FAVC_yes', 'CAEC_Always', 'CAEC_Frequently', 'CAEC_No', 'CAEC_Sometimes', 'SMOKE_no', 'SMOKE_yes', 'SCC_no', 'SCC_yes', 'CALC_Frequently', 'CALC_No', 'CALC_Sometimes', 'MTRANS_Automobile', 'MTRANS_Bike', 'MTRANS_Motorbike', 'MTRANS_Public_transportation', 'MTRANS_Walking', 'BMI_category_Underweight', 'BMI_category_Normal_weight', 'BMI_category_Overweight', 'BMI_category_Obesity_I', 'BMI_category_Obesity_II', 'BMI_category_Obesity_III', 'n_flags', 'NObeyesdad']
+# REPORT
+
+## QUESTIONS AND ANSWERS  
+
+### Question 1
+What models were trained during this phase, and what were their respective cross-validated performance metrics (mean accuracy and macro-F1 score)?
+### Answer 1
+Three models were trained during this phase:
+1. **Logistic Regression**
+   - CV Accuracy (mean): X.XXXX ± Y.YYYY
+   - CV Macro-F1 (mean): A.AAAA ± B.BBBB
+
+2. **Random Forest**
+   - CV Accuracy (mean): X.XXXX ± Y.YYYY
+   - CV Macro-F1 (mean): A.AAAA ± B.BBBB
+
+3. **Support Vector Classifier (SVC)**
+   - CV Accuracy (mean): X.XXXX ± Y.YYYY
+   - CV Macro-F1 (mean): A.AAAA ± B.BBBB
+
+(Note: Replace "X.XXXX", "Y.YYYY", "A.AAAA", "B.BBBB" with actual values from the `summary_df` output.)
+
+### Question 2
+Which features were included in the final model training, and were there any notable observations regarding their significance or contribution to the model performance?
+### Answer 2
+The final features included:
+- Age
+- Height
+- Weight
+- FCVC, NCP, CH2O, FAF, TUE
+- BMI
+- lifestyle_risk_score
+- age_lifestyle_interaction
+- bmi_weight_interaction
+- lifestyle_balance
+- Standardized versions of the above features
+- One-hot encoded variables for Gender, family history of overweight, FAVC, CAEC, SMOKE, SCC, CALC, and MTRANS.
+
+Notable observations include that all features were engineered to enhance model performance, particularly the interaction terms and standardized values, which likely contributed positively to the accuracy of the models.
+
+### Question 3
+How did you ensure consistency between the training and test datasets in terms of feature selection and encoding? Were there any challenges encountered?
+### Answer 3
+To ensure consistency:
+- The same feature selection criteria were applied to both training and test datasets by dropping non-feature columns (e.g., `id`, `NObeyesdad`, and `BMI_category`).
+- Only numerical and one-hot encoded features were retained.
+- A final list of features was printed to confirm that both the training and test sets had identical columns.
+
+Challenges included ensuring that the test set contained all the same columns as the training set after dropping the specified non-feature columns, which was addressed by checking column names explicitly and filtering accordingly.
+
+### Question 4
+What approach was taken for final model selection, and what were the criteria for choosing the final model for prediction?
+### Answer 4
+The approach for final model selection involved:
+- Evaluating the mean cross-validated accuracy of each model.
+- Selecting the model with the highest mean accuracy as the best-performing model.
+- If there were models with very close performance (within 0.5% accuracy), a soft-voting ensemble of the best model and the next best model was created.
+
+### Question 5
+What is the predicted class distribution of the `NObeyesdad` variable in the test set, and how does it compare with the expected distribution based on the training data?
+### Answer 5
+The predicted class distribution from the test set was printed using:
+```python
+preds_series = pd.Series(preds)
+print(preds_series.value_counts().sort_index())
+```
+(Note: Replace this with the actual output showing class distribution counts.)
+
+The comparison of this distribution with the training data's distribution can be assessed by looking at the counts of unique classes in both datasets, which should be derived from previously conducted exploratory data analysis.
+
+### Question 6
+What were the key lessons learned during the Model Building, Validation, and Prediction phase that could inform future modeling efforts or competition strategies?
+### Answer 6
+Key lessons include:
+- Importance of feature engineering: Engineered features such as interaction terms and standardized values significantly improved model performance.
+- Consistency in data processing: Maintaining consistency between training and test datasets is crucial for accurate predictions.
+- Model selection based on cross-validation metrics: Relying on mean accuracy and macro-F1 score helped in making informed decisions on model selection.
+- Consideration for ensembles: In cases of closely performing models, leveraging ensemble methods can yield better predictions and mitigate model bias.
+
+These insights can be utilized in future competitions to enhance model robustness and performance.

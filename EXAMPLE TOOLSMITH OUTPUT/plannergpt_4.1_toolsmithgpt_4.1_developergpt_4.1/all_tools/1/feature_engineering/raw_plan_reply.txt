@@ -1,0 +1,160 @@
+Thank you for the thorough background, tool list, and EDA findings. Here is your **Feature Engineering Plan** for the "obesity_risks" project, strictly following your constraints and tailoring actions to each feature. The plan is divided into four critical tasks, including detailed steps, objectives, per-feature actions, tool usage, and expected outputs.
+
+---
+
+## FEATURE ENGINEERING PLAN
+
+---
+
+### **TASK 1: Create and Transform Domain-Specific Composite Features**
+
+**Objective:** Incorporate domain knowledge and EDA findings by engineering composite features that capture key risk patterns, non-linearities, and interactions.
+
+**Actions & Features Involved:**
+
+1. **BMI Category**
+   - Use `create_bmi_category_feature` to add `BMI_category` (categorical: Underweight, Normal, Overweight, etc.) from `BMI`.
+   - **Impact:** Encodes non-linear risk per medical guidelines; aids models that struggle with raw continuous BMI.
+
+2. **Lifestyle Risk Score**
+   - Use `create_lifestyle_risk_score` to aggregate dietary and behavioral factors into `lifestyle_risk_score`.
+   - **Inputs:** `FAVC`, `CAEC`, `CALC`, `SCC`, `SMOKE`, `FCVC`, `CH2O`, `FAF`, `TUE`.
+   - **Impact:** Sums multiple health behaviors into a single risk score, as EDA showed obesity is multi-factorial.
+
+3. **Age-Lifestyle Interaction**
+   - Use `create_age_lifestyle_interaction` to generate `age_lifestyle_interaction`.
+   - **Inputs:** `Age`, `FAVC`, `FCVC`, `FAF`.
+   - **Impact:** Models the compounding effect of unhealthy behaviors with increasing age.
+
+4. **BMI-Weight Interaction**
+   - Use `create_bmi_weight_interaction` to generate `bmi_weight_interaction`.
+   - **Inputs:** `BMI`, `Weight`.
+   - **Impact:** Addresses multicollinearity and captures non-linear risk; reflects EDA findings on high BMI-Weight correlation.
+
+5. **Lifestyle Balance Feature**
+   - Use `create_lifestyle_balance_feature` to add `lifestyle_balance`.
+   - **Inputs:** `FAF`, `TUE`.
+   - **Impact:** Encodes the net effect of physical activity versus sedentary behavior.
+
+**Constraints:**
+- Apply identically to both train and test.
+- Do NOT use target variable in feature creation.
+- Use default tool parameters unless otherwise stated.
+
+**Expected Output:**  
+- New columns: `BMI_category`, `lifestyle_risk_score`, `age_lifestyle_interaction`, `bmi_weight_interaction`, `lifestyle_balance`.
+
+---
+
+### **TASK 2: Encode and Transform Categorical Features for Model Readiness**
+
+**Objective:** Prepare categorical features for machine learning models by encoding them into numerical representations.
+
+**Actions & Features Involved:**
+
+1. **One-Hot Encoding**
+   - Use `one_hot_encode_columns` for all categorical features except the target and `id`:
+     - `Gender`, `family_history_with_overweight`, `FAVC`, `CAEC`, `SMOKE`, `SCC`, `CALC`, `MTRANS`, `BMI_category` (created above).
+   - **Parameters:** `drop_original=False`, use default separator.
+   - **Constraint:** Ensure all categories in test are present in train. If not, encode new categories as "Rare" or ignore.
+
+2. **Target Mean Encoding (Optional, Advanced)**
+   - If you wish to experiment with high-cardinality variables (e.g., `MTRANS`), you may use `target_mean_encoding` on train, then apply mapping to test.
+   - **Constraint:** Must ordinally encode `NObeyesdad` for this purpose, and avoid leakage (fit on train, apply to test).
+
+**Expected Output:**  
+- New one-hot encoded columns for each category.
+- Original categorical columns retained unless explicitly dropped.
+- Encoded columns usable for modeling.
+
+---
+
+### **TASK 3: Standardize Numerical and Composite Features**
+
+**Objective:** Normalize features so that all numerical and engineered features are on comparable scales, benefiting most ML algorithms.
+
+**Actions & Features Involved:**
+
+1. **Standardize (Z-score) All Key Numerical Features**
+   - Use `standardize_numerical_features` on the following columns:
+     - Raw: `Age`, `Height`, `Weight`, `FCVC`, `NCP`, `CH2O`, `FAF`, `TUE`, `BMI`
+     - Engineered: `lifestyle_risk_score`, `age_lifestyle_interaction`, `bmi_weight_interaction`, `lifestyle_balance`
+   - **Parameters:** Use suffix `"_std"`.
+
+2. **Flag Aggregation**
+   - Use `aggregate_flag_features` to count the number of outlier/flag columns per row.
+   - **Inputs:** All flag columns (ending with `_flag`).
+   - **Output:** New column `n_flags`.
+   - **Impact:** Provides a summary signal for anomaly-prone records.
+
+**Constraints:**
+- Standardization parameters (mean, std) must be computed on train; apply same to test.
+- Do not remove or overwrite original columns; keep both raw and standardized as options.
+
+**Expected Output:**  
+- Standardized versions of all selected features (e.g., `Age_std`, `lifestyle_risk_score_std`, etc.).
+- New column: `n_flags`.
+
+---
+
+### **TASK 4: Feature Selection and Output File Preparation**
+
+**Objective:** Prepare the final set of features for modeling by pruning irrelevant/redundant features and exporting processed datasets.
+
+**Actions & Features Involved:**
+
+1. **Feature Pruning**
+   - Exclude the following from modeling:
+     - `id` (identifier, never used as a feature)
+     - Any duplicate/overlapping features (e.g., if both `BMI`, `Weight`, and `bmi_weight_interaction` are included, verify via multicollinearity stats if all are needed)
+     - Outlier flag columns (except `n_flags`)—these are now summarized.
+     - Any columns created solely for intermediate calculations.
+
+2. **Export Processed Data**
+   - For train: Include all final features plus `NObeyesdad` as target.
+   - For test: Include all final features; no target column.
+   - Save as `processed_train.csv` and `processed_test.csv`.
+
+**Constraints:**
+- Do not remove features unless justified by EDA or high redundancy.
+- Document which features are included/excluded in a feature list for reproducibility.
+
+**Expected Output:**  
+- Two files: `processed_train.csv` and `processed_test.csv`, ready for modeling.
+- A text list of included features (for developer reference).
+
+---
+
+## **Summary Table: Feature-Level Actions**
+
+| Feature                              | Action/Transformation                                              | Tool/Method Used                    |
+|---------------------------------------|--------------------------------------------------------------------|-------------------------------------|
+| id                                   | Exclude from modeling                                              | Manual                              |
+| Gender                               | One-hot encode                                                     | one_hot_encode_columns              |
+| Age                                  | Standardize, include in engineered features                        | standardize_numerical_features, create_age_lifestyle_interaction |
+| Height, Weight, BMI                  | Standardize, combine, interaction terms                            | standardize_numerical_features, create_bmi_weight_interaction    |
+| family_history_with_overweight        | One-hot encode                                                     | one_hot_encode_columns              |
+| FAVC, FCVC, NCP, CAEC, SMOKE, SCC, CALC | One-hot encode, composite risk score, interaction features        | one_hot_encode_columns, create_lifestyle_risk_score, create_age_lifestyle_interaction |
+| CH2O, FAF, TUE                       | Standardize, composite/interaction features                        | standardize_numerical_features, create_lifestyle_risk_score, create_lifestyle_balance_feature |
+| MTRANS                               | One-hot encode; consider target mean encoding if high-cardinality  | one_hot_encode_columns, target_mean_encoding (optional)           |
+| BMI_category (engineered)             | One-hot encode                                                     | create_bmi_category_feature, one_hot_encode_columns               |
+| lifestyle_risk_score (engineered)     | Standardize                                                        | create_lifestyle_risk_score, standardize_numerical_features       |
+| age_lifestyle_interaction (engineered)| Standardize                                                        | create_age_lifestyle_interaction, standardize_numerical_features  |
+| bmi_weight_interaction (engineered)   | Standardize                                                        | create_bmi_weight_interaction, standardize_numerical_features     |
+| lifestyle_balance (engineered)        | Standardize                                                        | create_lifestyle_balance_feature, standardize_numerical_features  |
+| All *_flag columns                    | Aggregate to `n_flags`                                             | aggregate_flag_features            |
+| NObeyesdad (target)                   | Retain in train only                                               | Manual                             |
+
+---
+
+## **Constraints Recap**
+- No modification of features outside this phase.
+- No target information used in feature creation for test set.
+- Do not overwrite or drop original features unless justified.
+- Output files must be ready for direct use in the next (modeling) phase.
+
+---
+
+**End of Plan.**  
+This step-by-step roadmap gives clear, actionable instructions for each feature and ensures data is fully prepared for modeling.  
+If you need a feature-by-feature checklist or developer handoff sheet, let me know!

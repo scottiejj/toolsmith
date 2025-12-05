@@ -1,0 +1,15 @@
+Given the tool descriptions, the error occurs because the `macro_f1` key is not included in the dictionaries returned by the functions `fit_and_evaluate_logistic_regression`, `fit_and_evaluate_random_forest`, and `fit_and_evaluate_svc`. These functions return dictionaries with standardized results, but the expected keys are not directly mentioned in the descriptions. 
+
+The error-causing snippet is:
+
+```python
+summary_data.append({
+    "Model": res['model_name'],
+    "CV Accuracy (mean)": f"{res['mean_scores']['accuracy']:.4f} ± {res['std_scores']['accuracy']:.4f}",
+    "CV Macro-F1 (mean)": f"{res['mean_scores']['macro_f1']:.4f} ± {res['std_scores']['macro_f1']:.4f}",  # KeyError occurs here
+    "# Features": res['n_features'],
+    "# Samples": res['n_samples']
+})
+```
+
+The line attempting to access `res['mean_scores']['macro_f1']` is the source of the `KeyError`. The functions do not guarantee the presence of a `macro_f1` key in the `mean_scores` or `std_scores` dictionaries.

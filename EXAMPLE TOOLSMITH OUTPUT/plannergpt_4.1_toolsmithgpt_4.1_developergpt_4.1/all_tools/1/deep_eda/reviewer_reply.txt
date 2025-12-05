@@ -1,0 +1,34 @@
+```json
+{
+    "final_answer": {
+        "final_suggestion": {},
+        "final_score": {
+            "agent developer": 5
+        }
+    }
+}
+```
+
+
+```json
+{
+    "final_answer": {
+        "final_suggestion": {},
+        "final_score": {
+            "agent toolsmith": 5
+        }
+    }
+}
+```
+
+
+```json
+{
+    "final_answer": {
+        "final_suggestion": {},
+        "final_score": {
+            "agent planner": 5
+        }
+    }
+}
+```

@@ -151,7 +151,13 @@ class Developer(Agent):
         ) as f:  # save the single phase code
             f.write("\n".join(matches))
 
-        prefix_in_code_file = [line + "\n" for line in PREFIX_IN_CODE_FILE.split("\n")]
+        # Fill placeholders in the code prefix with current phase and competition
+        phase_dir = state.phase_to_directory.get(state.phase, state.dir_name)
+        filled_prefix = PREFIX_IN_CODE_FILE.format(
+            phase_dir=phase_dir,
+            competition=state.competition,
+        )
+        prefix_in_code_file = [line + "\n" for line in filled_prefix.split("\n")]
         code_with_output_lines = prefix_in_code_file + previous_code + code_lines
         run_code_lines = prefix_in_code_file + previous_run_code + code_lines
 
@@ -210,7 +216,7 @@ class Developer(Agent):
 
         interpreter = sys.executable  # conda env python
         logger.info(f"Running with interpreter: {interpreter}")
-        
+
         try:
 
             result = subprocess.run(
@@ -448,7 +454,7 @@ class Developer(Agent):
         if (
             len(state.memory) == 1
         ):  # if there is no memory before, it means it is the first execution
-            if self.model == "gpt-4o":
+            if self.model in ["gpt-4o", "gpt-4.1"]:
                 history.append(
                     {
                         "role": "system",
@@ -468,7 +474,7 @@ class Developer(Agent):
                 "You have advanced reasoning abilities and can improve your answers through reflection."
             )
             experience_with_suggestion = self._gather_experience_with_suggestion(state)
-            if self.model == "gpt-4o":
+            if self.model in ["gpt-4o", "gpt-4.1"]:
                 history.append(
                     {
                         "role": "system",
@@ -499,12 +505,12 @@ class Developer(Agent):
                     ):  # Reset history to initial system message if retrying or no code was generated
                         history = history[:1]
                     raw_reply, history = self.llm.generate(
-                        input, history, max_completion_tokens=4096
+                        input, history, max_completion_tokens=8192
                     )
                     prompt_round0 = self._generate_prompt_round0(state)
                     input = prompt_round0
                     raw_reply, history = self.llm.generate(
-                        input, history, max_completion_tokens=4096
+                        input, history, max_completion_tokens=8192
                     )
                 else:
                     input = PROMPT_DEVELOPER_WITH_EXPERIENCE_ROUND0_0.format(

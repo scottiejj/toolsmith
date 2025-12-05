@@ -1,0 +1,57 @@
+Let's answer the questions based on the provided context and outputs.
+
+### Question 1
+**What are the key statistical findings regarding each numerical feature in relation to the target variable 'NObeyesdad'?**
+
+Key findings from the numerical feature summary stratified by obesity class include:
+- **Age**: Median ages increase with obesity class from `Insufficient_Weight` (19.36) to `Obesity_Type_II` (27.70), with `Obesity_Type_I` and `Overweight_Level_II` reflecting similar median ages (around 24-25).  
+- **Height**: There is less variation in median height across classes, but `Obesity_Type_II` has the lowest median height.
+- **Weight**: The median weight rises significantly from `Insufficient_Weight` (47.78 kg) to `Obesity_Type_III` (102.88 kg), indicating a clear trend of increasing weight with obesity class.
+- **BMI**: The median BMI also shows a significant increase from `Insufficient_Weight` (17.51) to `Obesity_Type_III` (41.75), confirming the primary role of BMI in obesity classification.
+  
+### Question 2
+**Which categorical features demonstrated significant associations with the target variable during the analysis? What specific patterns emerged?**
+
+Significant associations were found with:
+- **Gender**: The chi-squared test showed differences in obesity classes between males and females, suggesting that gender may influence obesity prevalence.
+- **Family History with Overweight**: Individuals with a family history of overweight showed higher prevalence rates in obesity classes.
+- **FAVC (Frequent consumption of high-calorie food)** and **SCC (Monitors calorie consumption)**: Both features demonstrated significant associations with higher obesity classes, indicating lifestyle factors impacting weight status.
+- Patterns suggest that higher rates of obesity are associated with frequent high-calorie food consumption and lower monitoring of calorie intake.
+
+### Question 3
+**What potential feature interactions were identified, and how might they influence the target variable?**
+
+The correlation heatmap revealed several interactions:
+- **Weight and BMI**: These features have a strong positive correlation (0.94), suggesting that weight is a key determinant in BMI calculations, directly influencing obesity classifications.
+- **Age and BMI**: A moderate positive correlation (0.34) indicates that as age increases, BMI tends to rise, possibly pointing to lifestyle changes affecting weight over time.
+- **Height and Weight**: A moderate correlation (0.42) indicates taller individuals are likely to weigh more, which could influence BMI and obesity class.
+- **FAF (Physical Activity Frequency) and BMI**: A weak negative correlation (-0.21) suggests that increased physical activity may help lower BMI, thus affecting obesity classifications.
+
+### Question 4
+**What multicollinearity issues were identified among the numerical features, and which features should be considered for removal or combination?**
+
+Multicollinearity issues were observed between:
+- **Weight and BMI**: The high correlation (0.94) suggests one could be removed or combined as they convey similar information.
+- **Height and Weight**: Moderate correlation (0.42) could suggest consideration for removal of one feature depending on the model complexity.
+- **FAF and BMI**: Given the weak correlation, these features do not exhibit significant multicollinearity, but further evaluation in modeling could provide clarity.
+
+### Question 5
+**Were there any surprising patterns or insights regarding obesity class segmentation and lifestyle factors that could inform new feature creation?**
+
+Surprising insights include:
+- The age distribution showed younger individuals classified as `Insufficient_Weight` and `Normal_Weight`, while obesity classes had a broader age range, suggesting that lifestyle factors may evolve with age.
+- Higher obesity classes corresponded with a lack of calorie monitoring, suggesting potential for a new feature that combines dietary habits and monitoring.
+- The significant outliers in age for `Normal_Weight` and `Obesity_Type_I` indicate that older individuals can exist in lower obesity classes, pointing to the need for age-adjusted lifestyle interventions.
+
+### Question 6
+**Based on the visualizations and statistical tests, which features or combinations of features would you prioritize for engineering new variables, and what transformations do you propose?**
+
+- **BMI and Weight**: Given their high correlation, creating a composite feature that combines both might reduce redundancy while retaining critical information.
+- **Age and Lifestyle Factors**: Combining age with lifestyle factors (e.g., FAVC and SCC) into a "Risk Profile" feature could enhance predictive power regarding obesity risk.
+- **Technology Usage (TUE) and Physical Activity (FAF)**: These could be combined to create a "Lifestyle Balance" feature that captures a balance between sedentary and active behavior.
+
+Transformations to consider include:
+- Normalizing or standardizing numerical features to improve model performance.
+- Encoding categorical features using one-hot encoding for better representation in machine learning models.
+
+These steps would enhance feature sets and potentially improve prediction accuracy for obesity levels in future modeling phases.

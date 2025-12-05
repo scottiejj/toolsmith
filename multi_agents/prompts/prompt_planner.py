@@ -48,9 +48,13 @@ Currently, I am at phase: {phase_name}.
 3. Focus on critical steps specific to the current phase.
 4. Prioritize methods and values mentioned in USER RULES.
 5. Offer detailed plans without writing actual code.
-6. ONLY focus on tasks relevant to this phase, avoiding those belonging to other phases. For example, during the in-depth EDA phase:
-    - you CAN perform detailed univariate analysis on KEY features.
-    - you CAN NOT modify any feature or modify data.
+6. STRICT PHASE BOUNDARIES: ONLY focus on tasks relevant to this phase; avoid redoing earlier-phase work.
+    - In in-depth EDA:
+        - you CAN perform detailed univariate analysis on KEY features.
+        - you CAN NOT modify any feature or modify data.
+    - In Model Building, Validation, and Prediction:
+        - you CAN train/validate models, tune hyperparameters, and generate predictions using `processed_train.csv`/`processed_test.csv`.
+        - you CAN NOT re-run data cleaning or feature engineering (e.g., DO NOT re-impute missing values, re-encode categories, or re-scale features already handled upstream).
 
 ## DATA OUTPUT PREFERENCES ##
 1. Prioritize TEXT format (print) for statistical information.

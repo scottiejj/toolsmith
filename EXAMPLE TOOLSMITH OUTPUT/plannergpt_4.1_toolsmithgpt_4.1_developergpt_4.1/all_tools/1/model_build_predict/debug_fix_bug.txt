@@ -1,0 +1,32 @@
+To fix the issue with the code snippet, we need to analyze the error message and the provided context.
+
+### Step 1: Analyze the Error
+
+The error message is a `KeyError` indicating that the key `'macro_f1'` is not found in the dictionary `res['mean_scores']`. This suggests that the dictionary `res['mean_scores']` does not contain a key for `'macro_f1'`. We need to ensure that the expected keys are present in the dictionary, or we need to adjust the code to handle the absence of such keys.
+
+### Step 2: Correct the Error
+
+Given that the `macro_f1` key is not present, we should check the structure of the `res` dictionary. It's possible that `macro_f1` is not being computed or stored in the dictionary. We will need to modify the code to handle this situation gracefully.
+
+A common practice is to use the dictionary method `.get()` which allows you to provide a default value if the key is missing. Alternatively, we can check if the key exists before attempting to access it.
+
+### Step 3: Implement the Correction
+
+We will modify the code to use the `.get()` method with a default value for the case where `'macro_f1'` is not present.
+
+```python
+summary_data.append({
+    "Model": res['model_name'],
+    "CV Accuracy (mean)": f"{res['mean_scores']['accuracy']:.4f} ± {res['std_scores']['accuracy']:.4f}",
+    "CV Macro-F1 (mean)": f"{res['mean_scores'].get('macro_f1', 0.0):.4f} ± {res['std_scores'].get('macro_f1', 0.0):.4f}",
+    "# Features": res['n_features'],
+    "# Samples": res['n_samples']
+})
+```
+
+### Explanation of the Fix
+
+- We replaced `res['mean_scores']['macro_f1']` with `res['mean_scores'].get('macro_f1', 0.0)`. This will return `0.0` (or any other default value you deem appropriate) if `'macro_f1'` is not found in the dictionary.
+- Similarly, we replaced `res['std_scores']['macro_f1']` with `res['std_scores'].get('macro_f1', 0.0)`.
+
+This approach ensures that the code does not crash when `'macro_f1'` is missing, and it allows you to specify a default behavior in such cases.

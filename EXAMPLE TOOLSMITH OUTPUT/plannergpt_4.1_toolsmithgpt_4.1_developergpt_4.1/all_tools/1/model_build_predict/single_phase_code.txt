@@ -1,0 +1,166 @@
+
+import os
+import pandas as pd
+
+# File paths
+data_dir = '/Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/'
+train_file = os.path.join(data_dir, 'processed_train.csv')
+test_file = os.path.join(data_dir, 'processed_test.csv')
+
+# Load data (always work on copies)
+train_df = pd.read_csv(train_file)
+test_df = pd.read_csv(test_file)
+train = train_df.copy()
+test = test_df.copy()
+
+# Remove non-feature columns
+drop_cols = ['id', 'NObeyesdad', 'BMI_category']  # 'BMI_category' is string, don't use; keep one-hot BMI_category_* columns
+all_cols = train.columns.tolist()
+# Identify one-hot columns (all starting with categorical col names plus '_')
+one_hot_bmi = [col for col in all_cols if col.startswith('BMI_category_')]
+# All one-hots are already in, so dropping 'BMI_category' is safe
+
+# Build feature list
+X_cols = [c for c in all_cols if c not in drop_cols]
+# Remove any columns that have object or string type (other than one-hot columns)
+X_cols = [c for c in X_cols if (train[c].dtype != 'object' or c in one_hot_bmi)]
+
+# Ensure test has the same columns
+X_test_cols = [c for c in X_cols if c in test.columns]
+
+# Final modeling matrices
+X_train = train[X_test_cols].copy()
+y_train = train['NObeyesdad'].copy()
+X_test = test[X_test_cols].copy()
+
+# Print final features and types
+print("Final modeling feature columns:")
+for col in X_train.columns:
+    print(f"{col}: {X_train[col].dtype}")
+print(f"\nX_train shape: {X_train.shape}, X_test shape: {X_test.shape}, y_train shape: {y_train.shape}")
+print("Unique target classes:", sorted(y_train.unique()))
+
+# Define class labels (in order)
+target_labels = sorted(y_train.unique())
+
+model_results = []
+
+# Logistic Regression
+lr_result = fit_and_evaluate_logistic_regression(
+    X=X_train,
+    y=y_train,
+    feature_cols=X_train.columns.tolist(),
+    target_labels=target_labels,
+    cv=5,
+    random_state=42,
+    solver='liblinear',
+    max_iter=500,
+    return_estimator=True
+)
+model_results.append(lr_result)
+
+# Random Forest
+rf_result = fit_and_evaluate_random_forest(
+    X=X_train,
+    y=y_train,
+    feature_cols=X_train.columns.tolist(),
+    target_labels=target_labels,
+    cv=5,
+    n_estimators=100,
+    random_state=42,
+    return_estimator=True
+)
+model_results.append(rf_result)
+
+# SVC
+svc_result = fit_and_evaluate_svc(
+    X=X_train,
+    y=y_train,
+    feature_cols=X_train.columns.tolist(),
+    target_labels=target_labels,
+    cv=5,
+    kernel='rbf',
+    C=1.0,
+    gamma='scale',
+    random_state=42,
+    return_estimator=True
+)
+model_results.append(svc_result)
+
+# Summarize results
+import pandas as pd
+
+summary_data = []
+for res in model_results:
+    summary_data.append({
+        "Model": res['model_name'],
+        "CV Accuracy (mean)": f"{res['mean_scores']['accuracy']:.4f} ± {res['std_scores']['accuracy']:.4f}",
+        "CV Macro-F1 (mean)": f"{res['mean_scores'].get('macro_f1', 0.0):.4f} ± {res['std_scores'].get('macro_f1', 0.0):.4f}",
+        "# Features": res['n_features'],
+        "# Samples": res['n_samples']
+    })
+summary_df = pd.DataFrame(summary_data)
+print("\nCross-Validation Results Summary:")
+print(summary_df)
+
+import numpy as np
+
+# Find best model(s)
+accs = [res['mean_scores']['accuracy'] for res in model_results]
+best_idx = np.argmax(accs)
+best_model = model_results[best_idx]
+print(f"\nSelected model for final prediction: {best_model['model_name']} (Accuracy: {best_model['mean_scores']['accuracy']:.4f})")
+
+# Check for close second (within 0.5% absolute accuracy)
+close_idxs = [i for i, acc in enumerate(accs) if abs(acc - accs[best_idx]) < 0.005 and i != best_idx]
+ensemble_used = False
+
+if close_idxs:
+    print("Two models are very close in performance; using soft-voting ensemble.")
+    estimators = [model_results[best_idx]['estimator'], model_results[close_idxs[0]]['estimator']]
+    preds = soft_voting_ensemble_predict(
+        estimators=estimators,
+        X=X_test,
+        class_labels=target_labels
+    )
+    ensemble_used = True
+else:
+    # Use the best model
+    estimator = best_model['estimator']
+    # If estimator supports predict_proba, use calibrated prediction
+    if hasattr(estimator, 'predict_proba'):
+        y_probs = estimator.predict_proba(X_test)
+        preds = obesity_prediction_calibrator(
+            y_probs=y_probs,
+            class_labels=target_labels,
+            method='argmax'
+        )
+    else:
+        preds = estimator.predict(X_test)
+
+# Print class distribution
+preds_series = pd.Series(preds)
+print("\nTest set prediction class distribution:")
+print(preds_series.value_counts().sort_index())
+
+# Prepare submission
+ids = test_df['id']
+submission = obesity_submission_formatter(
+    ids=ids,
+    preds=preds,
+    id_col='id',
+    target_col='NObeyesdad'
+)
+
+# Sanity checks
+assert submission.shape[0] == X_test.shape[0], "Submission row count does not match test set."
+assert set(submission.columns) == {'id', 'NObeyesdad'}, "Submission columns incorrect."
+print("\nSubmission file preview:")
+print(submission.head())
+print("\nSubmission class value counts:")
+print(submission['NObeyesdad'].value_counts())
+
+# Save to file
+submission_path = os.path.join(data_dir, 'submission.csv')
+submission.to_csv(submission_path, index=False)
+print(f"\nSubmission file saved to: {submission_path}")

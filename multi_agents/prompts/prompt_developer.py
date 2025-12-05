@@ -1,12 +1,26 @@
 PREFIX_IN_CODE_FILE = '''import sys
 import os
-sys.path.extend(['.', '..', '../..', '../../..', '../../../..', 'multi_agents', 'multi_agents/tools', 'multi_agents/prompts'])
+import importlib.util
+import sys as _sys
+
+# Basic paths
+sys.path.extend(['.', '..', '../..', '../../..', '../../../..', 'multi_agents','multi_agents/tools', 'multi_agents/prompts'])
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from tools.ml_tools import *
+
+phase_module_path = os.path.join('multi_agents', 'competition', "{competition}", "{phase_dir}", "{phase_dir}_generated_tools", "{phase_dir}.py")
+
+spec = importlib.util.spec_from_file_location('phase_tools', phase_module_path)
+phase_tools = importlib.util.module_from_spec(spec)
+_sys.modules['phase_tools'] = phase_tools
+spec.loader.exec_module(phase_tools)
+from phase_tools import *  
 
 def generated_code_function():
     import numpy as np
     import pandas as pd'''
+
+
+
 
 
 PROMPT_DEVELOPER_TASK = '''
@@ -27,9 +41,13 @@ PROMPT_AVAILABLE_TOOLS = '''
 You have access to the following tools:
 {tool_names}
 ## USAGE INSTRUCTIONS ##
-1. These tools are pre-defined and pre-imported in the system. You do NOT need import them or implement them again.
+1. These tools are pre-defined and pre-imported in the system.
+   - Do NOT import them again and do NOT re-implement their logic.
+   - Do NOT redo earlier-phase operations using generic library calls (e.g., do not perform imputation/encoding/scaling again in Model Building).
+   - Always call the appropriate tool for the current phase and proceed.
 2. Use these tools by calling them with the correct parameters.
 3. Example: To drop specific columns, use the `remove_columns_with_missing_data` tool with appropriate parameters.
+4. Respect tool output schemas EXACTLY: use the same key names and structures documented for each tool.
 ## ADDITIONAL RESOURCES ##
 You can also use functions from public libraries such as:
 - Pandas
@@ -53,7 +71,7 @@ PROMPT_DEVELOPER_CONSTRAINTS = '''
      - Model Building, Validation, and Prediction: `processed_train.csv` and `processed_test.csv`
 
 2. Data Saving:
-   - Save image files in the `{restore_path}/images/` directory.
+   - Save image files in the `{restore_path}/images/` directory. Whenever you call any visualization tool, save its returned figure/axes/array immediately to `{restore_path}/images/`.
    - Save data files in the `{competition_path}/` directory.
    - Use clear, meaningful names for image files that reflect their content.
    - Do NOT use special characters like `/` or spaces in file names.
@@ -68,13 +86,35 @@ PROMPT_DEVELOPER_CONSTRAINTS = '''
    - Take care with target-dependent operations on the test set, which lacks the target variable.
    - Do NOT modify Id-type columns.
 
+## PHASE BOUNDARIES & NON-DUPLICATION ##
+1. Do not redo work from earlier phases.
+   - Data Cleaning tasks (e.g., missing value imputation, basic type fixes, obvious outlier removal) must NOT be repeated in Feature Engineering or Model Building.
+   - Feature Engineering tasks (e.g., encoding, scaling, feature creation/selection) must NOT be repeated in Model Building.
+2. Always consume the right artifacts for the current phase:
+   - Feature Engineering reads `cleaned_train.csv`/`cleaned_test.csv` and produces `processed_train.csv`/`processed_test.csv`.
+   - Model Building reads ONLY `processed_train.csv`/`processed_test.csv` and focuses on model training, validation, and prediction.
+3. If a model requires a transformation not present in the processed data (rare):
+   - Implement it inside an `sklearn` `Pipeline` attached to the model.
+   - Fit on training data only; apply to both train/test consistently.
+   - Do NOT write new intermediate files and do NOT alter upstream artifacts.
+4. Prefer calling existing tools for the current phase; do NOT re-implement earlier logic.
+   - If an operation has already been completed in a previous phase, skip it and proceed. Print a brief note like: "Skipping <operation>: already completed in a previous phase."
+
 ## CODING PRACTICES ##
 1. General Rules:
    - Use `print()` for outputting values.
    - Avoid writing `assert` statements.
+   - When consuming tool outputs, adhere to documented return schemas and key names without alteration.
 
 2. Visualization:
-   - Use `plt.close()` after saving each image.
+   - Whenever you call a visualization tool, always save visualization outputs to `{restore_path}/images/` with descriptive filenames immediately.
+   - Example:
+     ```python
+     fig = visualization_tool_name(df, columns=[...])  # tool returns a figure
+     out_path = os.path.join(restore_path, 'images', 'visualization_tool_name.png')
+     fig.savefig(out_path)
+     plt.close(fig)
+     ```
    - Limit EDA visualizations to 10 or fewer, focusing on the most insightful.
    - Optimize for large datasets (e.g., `annot=False` in seaborn heatmaps).
 
@@ -306,6 +346,7 @@ Please correct the error code snippet according to the error messages, output me
 2. Think about how to correct the error code snippet.
 3. Correct the error code snippet.
 NOTE that if the error occurs when trying to import the provided tool, remember you do NOT import tool, they are pre-defined and pre-imported in the system.
+If analysis shows the error originates inside the tool function implementation itself (not from your usage), you have permission to re-implement that specific tool inline in your fix. Keep the same signature and behavior contract, and document the change briefly.
 NOTE that the **last** code snippet in your response should be the **code snippet after correction** that I ask you to output.
 
 #############

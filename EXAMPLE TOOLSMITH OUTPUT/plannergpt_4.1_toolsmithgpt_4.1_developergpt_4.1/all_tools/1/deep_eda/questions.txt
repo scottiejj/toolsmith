@@ -1,0 +1,18 @@
+## QUESTIONS
+### Question 1
+What are the key statistical findings regarding each numerical feature in relation to the target variable 'NObeyesdad'?
+
+### Question 2
+Which categorical features demonstrated significant associations with the target variable during the analysis? What specific patterns emerged?
+
+### Question 3
+What potential feature interactions were identified, and how might they influence the target variable?
+
+### Question 4
+What multicollinearity issues were identified among the numerical features, and which features should be considered for removal or combination?
+
+### Question 5
+Were there any surprising patterns or insights regarding obesity class segmentation and lifestyle factors that could inform new feature creation?
+
+### Question 6
+Based on the visualizations and statistical tests, which features or combinations of features would you prioritize for engineering new variables, and what transformations do you propose?

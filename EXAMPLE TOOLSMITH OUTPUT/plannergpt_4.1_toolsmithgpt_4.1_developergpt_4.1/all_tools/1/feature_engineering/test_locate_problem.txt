@@ -1,0 +1,21 @@
+## CODE SNIPPET 1 WITH PROBLEM ##
+```python
+cat_cols = [
+    'Gender', 'family_history_with_overweight', 'FAVC', 'CAEC', 'SMOKE',
+    'SCC', 'CALC', 'MTRANS', 'BMI_category'
+]
+for col in cat_cols:
+    # Handle rare categories in the train dataset
+    train_fe = handle_rare_categories(train_fe, col=col, threshold=10, new_category='Rare')
+    
+    # Determine valid categories from the train dataset
+    valid_cats = set(train_fe[col].unique())
+    
+    # Harmonize test categories based on train categories
+    test_fe[col] = test_fe[col].apply(lambda x: x if x in valid_cats else 'Rare')
+    
+    # Ensure 'Rare' category is present in both datasets if introduced
+    train_fe[col] = train_fe[col].astype('category')  # Ensure the column is of category dtype
+    if 'Rare' in test_fe[col].values and 'Rare' not in train_fe[col].values:
+        train_fe[col] = train_fe[col].cat.add_categories(['Rare'])
+```

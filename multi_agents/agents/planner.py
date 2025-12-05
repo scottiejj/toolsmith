@@ -34,30 +34,31 @@ class Planner(Agent):
         for previous_phase in previous_phases:
             previous_dir_name = state.phase_to_directory[previous_phase]
             previous_plan += f"## {previous_phase.upper()} ##\n"
-            path_to_previous_plan = f'{state.competition_dir}/{previous_dir_name}/plan.json'
+            path_to_previous_plan = f'{state.competition_dir}/{previous_dir_name}/markdown_plan.txt'
             if os.path.exists(path_to_previous_plan):
                 with open(path_to_previous_plan, 'r') as f:
+                    previous_plan += f"{previous_phase} Plan\n"
                     previous_plan += f.read()
                     previous_plan += '\n'
             else:
-                previous_plan = "There is no plan in this phase.\n"
+                previous_plan += "There is no plan in this phase.\n"
         path_to_previous_report = f'{state.competition_dir}/{previous_dir_name}/report.txt'
+        previous_report = ""
         if os.path.exists(path_to_previous_report):
-            previous_report = read_file(path_to_previous_report)
+            with open(path_to_previous_report, 'r') as f:
+                previous_report += f"{previous_phase} Report\n"
+                previous_report += f.read()
         else:
-            previous_report = "There is no report in the previous phase.\n"
+            previous_report += "There is no report in the previous phase.\n"
         return previous_plan, previous_report
 
     def _execute(self, state: State, role_prompt: str) -> Dict[str, Any]:
         # implement the planning function
         history = []
-        data_preview = self._data_preview(state, num_lines=11)
-        background_info = f"Data preview:\n{data_preview}"
-        state.set_background_info(background_info)
         state_info = state.get_state_info()
 
         if len(state.memory) == 1: # if there is no memory before, it means it is the first execution
-            if self.model == 'gpt-4o':
+            if self.model in ["gpt-4o", "gpt-4.1"]:
                 history.append({"role": "system", "content": f"{role_prompt}{self.description}"})
             elif self.model == 'o1-mini':
                 history.append({"role": "user", "content": f"{role_prompt}{self.description}"})
@@ -65,7 +66,7 @@ class Planner(Agent):
             task = PROMPT_PLANNER_TASK.format(phase_name=state.phase)
             user_rules = state.generate_rules()
             input = PROMPT_PLANNER.format(phases_in_context=state.context, phase_name=state.phase, state_info=state_info, 
-                                          user_rules=user_rules, background_info=background_info, task=task)
+                                          user_rules=user_rules, background_info=state.background_info, task=task)
             _, history = self.llm.generate(input, history, max_completion_tokens=4096)
 
             # Round 1
@@ -109,7 +110,7 @@ class Planner(Agent):
         with open(f'{state.restore_dir}/{self.role}_history.json', 'w') as f:
             json.dump(history, f, indent=4)
 
-        input_used_in_review = f"   <background_info>\n{background_info}\n    </background_info>"
+        input_used_in_review = f"   <background_info>\n{state.background_info}\n    </background_info>"
 
         print(f"State {state.phase} - Agent {self.role} finishes working.")
 
@@ -153,3 +154,5 @@ class Planner(Agent):
                 "result": result
             }
         }
+
+

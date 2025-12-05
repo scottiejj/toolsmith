@@ -1,0 +1,21 @@
+Here are the six key questions designed to summarize your findings from the Model Building, Validation, and Prediction phase and provide guidance for the next phase (which is None):
+
+1. **What models were trained during this phase, and what were their respective cross-validated performance metrics (mean accuracy and macro-F1 score)?**
+   - *Purpose*: This question will summarize the effectiveness of each model you trained, providing insight into which model performed best and thus could be useful for future competitions or similar tasks.
+
+2. **Which features were included in the final model training, and were there any notable observations regarding their significance or contribution to the model performance?**
+   - *Purpose*: This question will highlight which features were most influential in the models, allowing you to reflect on the feature importance and consider their relevance for future projects or data analyses.
+
+3. **How did you ensure consistency between the training and test datasets in terms of feature selection and encoding? Were there any challenges encountered?**
+   - *Purpose*: This question aims to clarify the steps taken to maintain consistency across datasets, which is crucial for model validity, and will help identify any recurring issues that may need addressing in future phases or projects.
+
+4. **What approach was taken for final model selection, and what were the criteria for choosing the final model for prediction?**
+   - *Purpose*: This question will help elucidate the rationale behind selecting the final model, ensuring that decisions made during modeling are well-documented for future reference.
+
+5. **What is the predicted class distribution of the `NObeyesdad` variable in the test set, and how does it compare with the expected distribution based on the training data?**
+   - *Purpose*: This question will provide insights into the balance of predictions across classes, helping to identify potential biases in the model or areas where further analysis may be needed.
+
+6. **What were the key lessons learned during the Model Building, Validation, and Prediction phase that could inform future modeling efforts or competition strategies?**
+   - *Purpose*: This reflective question encourages you to summarize insights gained during the phase, which could improve future modeling practices or approaches in other competitions.
+
+These questions collectively cover the core aspects of your current phase, summarizing findings and providing insights for future work or similar tasks.

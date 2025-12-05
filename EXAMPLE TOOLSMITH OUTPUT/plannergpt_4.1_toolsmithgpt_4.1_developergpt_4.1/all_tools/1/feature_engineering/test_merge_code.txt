@@ -1,0 +1,145 @@
+To produce the fully corrected code, you need to replace the problematic code snippet in the original code with the corrected version. Here is how the corrected version of the code should look:
+
+```python
+import os
+import pandas as pd
+
+# Paths
+data_dir = '/Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/'
+train_file = os.path.join(data_dir, 'cleaned_train.csv')
+test_file = os.path.join(data_dir, 'cleaned_test.csv')
+
+# Load data
+train = pd.read_csv(train_file)
+test = pd.read_csv(test_file)
+
+# Work on copies for safety
+train_fe = train.copy()
+test_fe = test.copy()
+
+# 1. BMI Category
+train_fe = create_bmi_category_feature(train_fe, bmi_col='BMI', new_col='BMI_category')
+test_fe = create_bmi_category_feature(test_fe, bmi_col='BMI', new_col='BMI_category')
+
+# 2. Lifestyle Risk Score
+train_fe = create_lifestyle_risk_score(
+    train_fe,
+    favc_col='FAVC', caec_col='CAEC', calc_col='CALC', scc_col='SCC', smoke_col='SMOKE',
+    fcvc_col='FCVC', ch2o_col='CH2O', faf_col='FAF', tue_col='TUE', new_col='lifestyle_risk_score'
+)
+test_fe = create_lifestyle_risk_score(
+    test_fe,
+    favc_col='FAVC', caec_col='CAEC', calc_col='CALC', scc_col='SCC', smoke_col='SMOKE',
+    fcvc_col='FCVC', ch2o_col='CH2O', faf_col='FAF', tue_col='TUE', new_col='lifestyle_risk_score'
+)
+
+# 3. Age-Lifestyle Interaction
+train_fe = create_age_lifestyle_interaction(
+    train_fe,
+    age_col='Age', favc_col='FAVC', fcvc_col='FCVC', faf_col='FAF', new_col='age_lifestyle_interaction'
+)
+test_fe = create_age_lifestyle_interaction(
+    test_fe,
+    age_col='Age', favc_col='FAVC', fcvc_col='FCVC', faf_col='FAF', new_col='age_lifestyle_interaction'
+)
+
+# 4. BMI-Weight Interaction
+train_fe = create_bmi_weight_interaction(
+    train_fe, bmi_col='BMI', weight_col='Weight', new_col='bmi_weight_interaction'
+)
+test_fe = create_bmi_weight_interaction(
+    test_fe, bmi_col='BMI', weight_col='Weight', new_col='bmi_weight_interaction'
+)
+
+# 5. Lifestyle Balance
+train_fe = create_lifestyle_balance_feature(
+    train_fe, faf_col='FAF', tue_col='TUE', new_col='lifestyle_balance'
+)
+test_fe = create_lifestyle_balance_feature(
+    test_fe, faf_col='FAF', tue_col='TUE', new_col='lifestyle_balance'
+)
+
+# Categorical columns for encoding
+categorical_cols = [
+    'Gender', 'family_history_with_overweight', 'FAVC', 'CAEC', 'SMOKE',
+    'SCC', 'CALC', 'MTRANS', 'BMI_category'
+]
+
+# One-hot encode
+train_fe = one_hot_encode_columns(train_fe, categorical_cols=categorical_cols, drop_original=False)
+test_fe = one_hot_encode_columns(test_fe, categorical_cols=categorical_cols, drop_original=False)
+
+# Numerical and engineered columns to standardize
+numerical_cols = [
+    'Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE', 'BMI',
+    'lifestyle_risk_score', 'age_lifestyle_interaction', 'bmi_weight_interaction', 'lifestyle_balance'
+]
+
+# Standardize
+train_fe = standardize_numerical_features(train_fe, numerical_cols=numerical_cols, suffix="_std")
+test_fe = standardize_numerical_features(test_fe, numerical_cols=numerical_cols, suffix="_std")
+
+# Aggregate flag columns
+flag_cols = [col for col in train_fe.columns if col.endswith('_flag')]
+train_fe = aggregate_flag_features(train_fe, flag_cols=flag_cols, new_col="n_flags")
+test_fe = aggregate_flag_features(test_fe, flag_cols=flag_cols, new_col="n_flags")
+
+# Handle rare categories
+cat_cols = [
+    'Gender', 'family_history_with_overweight', 'FAVC', 'CAEC', 'SMOKE',
+    'SCC', 'CALC', 'MTRANS', 'BMI_category'
+]
+
+for col in cat_cols:
+    # Handle rare categories in the train dataset
+    train_fe = handle_rare_categories(train_fe, col=col, threshold=10, new_category='Rare')
+    
+    # Determine valid categories from the train dataset
+    valid_cats = set(train_fe[col].unique())
+    
+    # Harmonize test categories based on train categories
+    test_fe[col] = test_fe[col].apply(lambda x: x if x in valid_cats else 'Rare')
+    
+    # Ensure 'Rare' category is present in both datasets if introduced
+    train_fe[col] = train_fe[col].astype('category')  # Ensure the column is of category dtype
+    test_fe[col] = test_fe[col].astype('category')  # Ensure the column is of category dtype
+    
+    # Add 'Rare' to categories if needed and ensure both datasets have the same categories
+    if 'Rare' in test_fe[col].cat.categories and 'Rare' not in train_fe[col].cat.categories:
+        train_fe[col] = train_fe[col].cat.add_categories(['Rare'])
+    
+    # Ensure both datasets have the same categories
+    test_fe[col] = test_fe[col].cat.set_categories(train_fe[col].cat.categories)
+
+# One-hot encode categorical variables consistently for both train and test datasets
+train_fe = pd.get_dummies(train_fe, columns=cat_cols)
+test_fe = pd.get_dummies(test_fe, columns=cat_cols)
+
+# Align columns of test_fe with train_fe to ensure they have the same columns
+test_fe = test_fe.reindex(columns=train_fe.columns, fill_value=0)
+
+# Drop list construction
+# Ensure 'id' is not removed from columns to keep
+columns_to_remove = [col for col in train_fe.columns if col.endswith('_flag')]
+# Columns to keep = all except above
+train_keep_cols = [col for col in train_fe.columns if col not in columns_to_remove]
+test_keep_cols = [col for col in test_fe.columns if col not in columns_to_remove]
+
+# Ensure target is present in train but not in test
+if 'NObeyesdad' in train_keep_cols:
+    pass
+else:
+    train_keep_cols.append('NObeyesdad')
+
+# Export
+processed_train_path = os.path.join(data_dir, 'processed_train.csv')
+processed_test_path = os.path.join(data_dir, 'processed_test.csv')
+
+train_fe[train_keep_cols].to_csv(processed_train_path, index=False)
+test_fe[test_keep_cols].to_csv(processed_test_path, index=False)
+
+print(f"Final features for modeling (train):\n{train_keep_cols}")
+print(f"Processed datasets saved to:\n  {processed_train_path}\n  {processed_test_path}")
+```
+
+This version incorporates the necessary corrections to ensure categories are handled properly, consistent one-hot encoding is applied, and columns between train and test datasets are aligned correctly.

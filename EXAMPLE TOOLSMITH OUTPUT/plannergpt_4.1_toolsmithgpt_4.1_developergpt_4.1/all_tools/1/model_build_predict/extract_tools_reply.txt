@@ -1,0 +1,13 @@
+```json
+{
+    "tool_names": [
+        "fit_and_evaluate_logistic_regression",
+        "fit_and_evaluate_random_forest",
+        "fit_and_evaluate_svc",
+        "obesity_grouped_stratified_kfold",
+        "obesity_prediction_calibrator",
+        "soft_voting_ensemble_predict",
+        "obesity_submission_formatter"
+    ]
+}
+```

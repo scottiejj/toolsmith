@@ -38,6 +38,7 @@ class Reviewer(Agent):
             }
         else:
             key_mapping = {
+                "toolsmith": "agent toolsmith",
                 "planner": "agent planner",
                 "developer": "agent developer"
             }

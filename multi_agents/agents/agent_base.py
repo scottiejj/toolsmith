@@ -186,43 +186,91 @@ class Agent:
         md_output += "\n---\n"
         return md_output
 
-    def _get_tools(self, state: State) -> Tuple[str, List[str]]:            
+    # def _get_tools(self, state: State) -> Tuple[str, List[str]]:            
+    #     embeddings = OpenaiEmbeddings(api_key=load_api_config()[0], base_url=load_api_config()[1])
+    #     memory = RetrieveTool(self.llm, embeddings, doc_path='multi_agents/tools/ml_tools_doc', collection_name='tools')
+    #     # update the memory
+    #     memory.create_db_tools()
+
+    #     state_name = state.dir_name
+    #     with open('multi_agents/config.json', 'r') as file:
+    #         phase_to_dir = [key for key, value in json.load(file)['phase_to_directory'].items() if value == state_name][0]
+    #         # print(phase_to_dir)
+    #     with open('multi_agents/config.json', 'r') as file:
+    #         all_tool_names = json.load(file)['phase_to_ml_tools'][phase_to_dir]
+
+    #     if self.role == 'developer' and state.phase in ['Data Cleaning', 'Feature Engineering', 'Model Building, Validation, and Prediction'] and len(all_tool_names) > 0:
+    #         logger.info(f"Extracting tools' description for developer in phase: {state.phase}")
+    #         with open(f'{state.restore_dir}/markdown_plan.txt', 'r') as file:
+    #             markdown_plan = file.read()
+    #         input = PROMPT_EXTRACT_TOOLS.format(document=markdown_plan, all_tool_names=all_tool_names)
+    #         raw_reply, _ = self.llm.generate(input, history=[], max_completion_tokens=4096)
+    #         with open(f'{state.restore_dir}/extract_tools_reply.txt', 'w') as file:
+    #             file.write(raw_reply)
+    #         tool_names = self._parse_json(raw_reply)['tool_names']
+    #     else:
+    #         tool_names = all_tool_names
+
+    #     tools = []
+    #     for tool_name in tool_names:
+    #         conclusion = memory.query_tools(f'Use the {tool_name} tool.', state_name)
+    #         tools.append(conclusion)
+
+    #     if self.role == 'developer' and state.phase in ['Data Cleaning', 'Feature Engineering', 'Model Building, Validation, and Prediction']:  
+    #         with open(f'{state.restore_dir}/tools_used_in_{state.dir_name}.md', 'w') as file:
+    #             file.write(''.join(tools))
+        
+    #     tools = ''.join(tools) if len(tool_names) > 0 else "There is no pre-defined tools used in this phase."
+    #     return tools, tool_names
+    
+    def _get_tools(self, state: State) -> Tuple[str, List[str]]:
+        
+        # Build per-competition phase doc path
+        phase_dir = state.phase_to_directory.get(state.phase, state.dir_name)
+        doc_dir = os.path.join(
+            PREFIX_MULTI_AGENTS, "competition", state.competition, phase_dir, f"{phase_dir}_generated_tools"
+        )
+        phase_filename = f"{phase_dir}_tools.md"
+
         embeddings = OpenaiEmbeddings(api_key=load_api_config()[0], base_url=load_api_config()[1])
-        memory = RetrieveTool(self.llm, embeddings, doc_path='multi_agents/tools/ml_tools_doc', collection_name='tools')
-        # update the memory
-        memory.create_db_tools()
+        # Use a phase-scoped collection to avoid reusing previous phase's index
+        collection_name = f"tools_{state.competition}_{phase_dir}"
+        retriever = RetrieveTool(self.llm, embeddings, doc_path=doc_dir, collection_name=collection_name)
 
-        state_name = state.dir_name
-        with open('multi_agents/config.json', 'r') as file:
-            phase_to_dir = [key for key, value in json.load(file)['phase_to_directory'].items() if value == state_name][0]
-            # print(phase_to_dir)
-        with open('multi_agents/config.json', 'r') as file:
-            all_tool_names = json.load(file)['phase_to_ml_tools'][phase_to_dir]
+        # Create/update DB from the phase-scoped markdown
+        retriever.create_db_tools(doc_type='.md')
 
-        if self.role == 'developer' and state.phase in ['Data Cleaning', 'Feature Engineering', 'Model Building, Validation, and Prediction'] and len(all_tool_names) > 0:
+        # Load tool names from config (Toolsmith overwrites this list)
+        with open(f'{PREFIX_MULTI_AGENTS}/config.json', 'r') as file:
+            cfg = json.load(file)
+        tool_names = cfg.get('phase_to_ml_tools', {}).get(state.phase, [])
+
+        # Developer optional extraction from plan remains unchanged
+        if self.role == 'developer' and state.phase in ['Data Cleaning', 'Feature Engineering', 'Model Building, Validation, and Prediction'] and len(tool_names) > 0:
             logger.info(f"Extracting tools' description for developer in phase: {state.phase}")
             with open(f'{state.restore_dir}/markdown_plan.txt', 'r') as file:
                 markdown_plan = file.read()
-            input = PROMPT_EXTRACT_TOOLS.format(document=markdown_plan, all_tool_names=all_tool_names)
+            input = PROMPT_EXTRACT_TOOLS.format(document=markdown_plan, all_tool_names=tool_names)
             raw_reply, _ = self.llm.generate(input, history=[], max_completion_tokens=4096)
             with open(f'{state.restore_dir}/extract_tools_reply.txt', 'w') as file:
                 file.write(raw_reply)
-            tool_names = self._parse_json(raw_reply)['tool_names']
-        else:
-            tool_names = all_tool_names
+            parsed = self._parse_json(raw_reply)
+            if parsed and 'tool_names' in parsed:
+                tool_names = parsed['tool_names']
 
+        # Retrieve docs for requested tools
         tools = []
         for tool_name in tool_names:
-            conclusion = memory.query_tools(f'Use the {tool_name} tool.', state_name)
-            tools.append(conclusion)
+            # Simple query; could be refined per tool
+            chunk = retriever.query_tools(query=f'Use the {tool_name} tool.', phase_filename=phase_filename)
+            tools.append(chunk)
 
-        if self.role == 'developer' and state.phase in ['Data Cleaning', 'Feature Engineering', 'Model Building, Validation, and Prediction']:  
+        if self.role == 'developer' and state.phase!="Understand Background" and len(tools) > 0:
             with open(f'{state.restore_dir}/tools_used_in_{state.dir_name}.md', 'w') as file:
                 file.write(''.join(tools))
-        
-        tools = ''.join(tools) if len(tool_names) > 0 else "There is no pre-defined tools used in this phase."
-        return tools, tool_names
 
+        tools_text = ''.join(tools) if len(tool_names) > 0 else "There is no pre-defined tools used in this phase."
+        return tools_text, tool_names
 
     def _get_feature_info(self, state: State) -> str:
         # Define file names for before and after the current phase

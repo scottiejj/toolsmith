@@ -1,0 +1,24 @@
+## QUESTIONS
+### Question 1
+What files did you process? Which files were generated? Answer with detailed file path.
+
+### Question 2
+Which features were involved in this phase? What changes did they undergo? If any feature types were modified, answer which features are modified and how they are modified. If any features were deleted or created, answer which features are deleted or created and provide detailed explanations. (This is a FIXED question for each phase.)
+
+### Question 3
+What unique features were identified in the datasets, and did any of them exhibit unexpected data types or distributions?
+
+### Question 4
+What is the extent of missing values across numerical and categorical features, and how might these affect the analysis?
+
+### Question 5
+Were any outliers detected in the numerical features, particularly for `Age`, `Height`, and `Weight`, and what implications could these outliers have on the analysis?
+
+### Question 6
+How are the target variable (`NObeyesdad`) distributions shaped by the other features, and are there any anomalies in these relationships that need to be addressed?
+
+### Question 7
+What insights were gained regarding the relationships between features (e.g., dietary habits, lifestyle factors) and obesity levels, and how should these inform the data cleaning process?
+
+### Question 8
+What specific data characteristics or inconsistencies were observed that could hinder model performance, and what steps should be taken in the next phase to address them?

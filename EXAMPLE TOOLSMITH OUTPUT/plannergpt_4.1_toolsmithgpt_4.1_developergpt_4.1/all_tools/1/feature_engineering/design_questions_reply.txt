@@ -1,0 +1,21 @@
+Here are six key questions designed to summarize the findings from the Feature Engineering phase and provide guidance for the subsequent Model Building, Validation, and Prediction phase:
+
+1. **What new features were created during the Feature Engineering phase, and what insights or analyses led to their creation?**
+   - *Purpose:* This question will help summarize the new features generated from domain knowledge and insights gained from the exploratory data analysis (EDA). Understanding the rationale behind these features is crucial for model interpretation and evaluation.
+
+2. **How were the categorical variables transformed, and what encoding techniques were applied?**
+   - *Purpose:* This question focuses on the methods used for categorical variable transformation, such as one-hot encoding and target mean encoding. Clarity on how these variables are prepared is essential for ensuring they are appropriately modeled in the next phase.
+
+3. **What statistical transformations were applied to the numerical features, and how might these affect model performance?**
+   - *Purpose:* This question aims to identify any standardization or normalization techniques used on numerical features. Understanding these transformations is critical for assessing the impact on model training and convergence.
+
+4. **What feature selection criteria were used to determine which features to retain, and how many features are included in the final datasets?**
+   - *Purpose:* This question will provide insights into the feature selection process, helping to clarify which features were deemed most relevant for predicting obesity levels. It is important for understanding the model's complexity and potential overfitting.
+
+5. **Were there any interactions or composite features created that could significantly influence the model's predictive power? If so, which features are they?**
+   - *Purpose:* This question addresses the creation of interaction terms or composite features that may enhance the model's ability to capture complex relationships in the data. Knowing these features is vital for model building and interpretation.
+
+6. **What potential challenges or considerations should be kept in mind when transitioning to the Model Building phase, based on the feature engineering outcomes?**
+   - *Purpose:* This reflective question encourages the planner to think critically about any challenges, such as multicollinearity, feature scalability, or interpretability issues that may arise, helping to inform a more strategic approach to model building.
+
+These questions aim to encapsulate the critical aspects of the feature engineering phase while providing insights and considerations for building effective predictive models in the next phase.

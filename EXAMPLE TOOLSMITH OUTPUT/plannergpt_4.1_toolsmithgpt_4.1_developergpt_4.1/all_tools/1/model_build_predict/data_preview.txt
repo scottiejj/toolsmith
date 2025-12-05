@@ -1,0 +1,81 @@
+# Data Information
+
+## Data Type
+
+### ID type
+- **id** : Serves as the unique identifier for each data point. This feature is not used in model training.
+
+### Numerical type
+- **Age** : Age of the individual (continuous).
+- **Height** : Height of the individual in meters (continuous).
+- **Weight** : Weight of the individual in kilograms (continuous).
+- **FCVC** : Frequency of consumption of vegetables (continuous or ordinal).
+- **NCP** : Number of main meals per day (continuous or ordinal).
+- **CH2O** : Daily water consumption (continuous or ordinal).
+- **FAF** : Physical activity frequency (continuous or ordinal).
+- **TUE** : Time using technology devices (continuous or ordinal).
+- **BMI** : Body Mass Index (continuous, derived from height and weight).
+- **lifestyle_risk_score** : Composite score reflecting lifestyle risk (continuous).
+- **age_lifestyle_interaction** : Interaction term between age and lifestyle factors (continuous).
+- **bmi_weight_interaction** : Interaction term between BMI and weight (continuous).
+- **lifestyle_balance** : Calculated balance of lifestyle factors (continuous).
+- **Age_std, Height_std, Weight_std, FCVC_std, NCP_std, CH2O_std, FAF_std, TUE_std, BMI_std, lifestyle_risk_score_std, age_lifestyle_interaction_std, bmi_weight_interaction_std, lifestyle_balance_std** : Standardized versions of the above features (continuous).
+- **n_flags** : Count of certain binary flags set to True (integer).
+
+### Categorical type
+- **BMI_category** : Categorical BMI classification (e.g., Underweight, Normal_weight, Overweight, Obesity_I, Obesity_II, Obesity_III).
+- **Gender_Female, Gender_Male** : One-hot encoded binary variables for gender.
+- **family_history_with_overweight_no, family_history_with_overweight_yes** : One-hot encoded binary variables indicating family history of overweight.
+- **FAVC_no, FAVC_yes** : One-hot encoded binary variables for frequent consumption of high caloric food.
+- **CAEC_Always, CAEC_Frequently, CAEC_No, CAEC_Sometimes** : One-hot encoded binary variables for frequency of consumption of food between meals.
+- **SMOKE_no, SMOKE_yes** : One-hot encoded binary variables for smoking status.
+- **SCC_no, SCC_yes** : One-hot encoded binary variables for monitoring calorie consumption.
+- **CALC_Frequently, CALC_No, CALC_Sometimes** : One-hot encoded binary variables for alcohol consumption.
+- **MTRANS_Automobile, MTRANS_Bike, MTRANS_Motorbike, MTRANS_Public_transportation, MTRANS_Walking** : One-hot encoded binary variables for main mode of transportation.
+- **BMI_category_Underweight, BMI_category_Normal_weight, BMI_category_Overweight, BMI_category_Obesity_I, BMI_category_Obesity_II, BMI_category_Obesity_III** : One-hot encoded binary variables for BMI category.
+- **NObeyesdad** : Target variable (multi-class categorical).
+
+### Datetime type
+- None present in the data.
+
+## Detailed data description
+
+The dataset is designed for multi-class classification of obesity status based on a wide variety of anthropometric, lifestyle, and demographic features. Each row represents an individual, identified uniquely by the `id` field. The features are a mix of:
+- Directly observed (e.g., Age, Height, Weight)
+- Derived (e.g., BMI, BMI_category)
+- Engineered (e.g., lifestyle_risk_score, interaction terms, and their standardized forms)
+- One-hot encoded categorical variables representing various lifestyle, demographic, and behavioral attributes.
+
+Key characteristics and notable patterns:
+- The dataset is highly engineered, with many features representing interactions and standardized values, likely to improve model performance or address feature scaling.
+- Categorical features have been extensively one-hot encoded.
+- The `BMI` and `BMI_category` features reflect typical medical BMI cutoffs.
+- The target variable, `NObeyesdad`, represents specific classes of weight status (e.g., "Obesity_Type_II", "Normal_Weight", "Insufficient_Weight"), suggesting an emphasis on nuanced prediction of obesity levels.
+- No obvious missing values or datetime types.
+- Submission and test files appear to follow the same feature schema, except for the target variable, which is only in the train set.
+
+## Target Variable
+
+- **NObeyesdad**: The target variable represents the obesity status of the individual. It is a multi-class categorical variable with labels such as:
+  - Insufficient_Weight
+  - Normal_Weight
+  - Overweight_Level_I
+  - Overweight_Level_II
+  - Obesity_Type_I
+  - Obesity_Type_II
+  - Obesity_Type_III
+
+## Submission format (if applicable)
+
+The submission file should have the following columns:
+- **id** (integer): Unique identifier corresponding to each test data point.
+- **NObeyesdad** (string): Predicted obesity status for the individual.
+
+**Example:**
+| id    | NObeyesdad       |
+|-------|------------------|
+| 20758 | Normal_Weight    |
+| 20759 | Normal_Weight    |
+| ...   | ...              |
+
+All rows from the test set must be included, with `NObeyesdad` containing one of the valid class labels.

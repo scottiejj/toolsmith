@@ -1,0 +1,35 @@
+## CODE SNIPPET 1 AFTER CORRECTION ##
+```python
+cat_cols = [
+    'Gender', 'family_history_with_overweight', 'FAVC', 'CAEC', 'SMOKE',
+    'SCC', 'CALC', 'MTRANS', 'BMI_category'
+]
+
+for col in cat_cols:
+    # Handle rare categories in the train dataset
+    train_fe = handle_rare_categories(train_fe, col=col, threshold=10, new_category='Rare')
+    
+    # Determine valid categories from the train dataset
+    valid_cats = set(train_fe[col].unique())
+    
+    # Harmonize test categories based on train categories
+    test_fe[col] = test_fe[col].apply(lambda x: x if x in valid_cats else 'Rare')
+    
+    # Ensure 'Rare' category is present in both datasets if introduced
+    train_fe[col] = train_fe[col].astype('category')  # Ensure the column is of category dtype
+    test_fe[col] = test_fe[col].astype('category')  # Ensure the column is of category dtype
+    
+    # Add 'Rare' to categories if needed and ensure both datasets have the same categories
+    if 'Rare' in test_fe[col].cat.categories and 'Rare' not in train_fe[col].cat.categories:
+        train_fe[col] = train_fe[col].cat.add_categories(['Rare'])
+    
+    # Ensure both datasets have the same categories
+    test_fe[col] = test_fe[col].cat.set_categories(train_fe[col].cat.categories)
+
+# One-hot encode categorical variables consistently for both train and test datasets
+train_fe = pd.get_dummies(train_fe, columns=cat_cols)
+test_fe = pd.get_dummies(test_fe, columns=cat_cols)
+
+# Align columns of test_fe with train_fe to ensure they have the same columns
+test_fe = test_fe.reindex(columns=train_fe.columns, fill_value=0)
+```

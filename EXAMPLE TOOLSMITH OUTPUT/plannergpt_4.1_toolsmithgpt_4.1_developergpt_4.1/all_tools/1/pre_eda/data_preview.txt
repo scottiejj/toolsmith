@@ -1,0 +1,74 @@
+# Data Information
+
+## Data Type
+
+### ID type
+- `id`: Unique identifier for each data point (NOT used for model training).
+
+### Numerical type
+- `Age`: Age of the individual (float).
+- `Height`: Height in meters (float).
+- `Weight`: Weight in kilograms (float).
+- `FCVC`: Frequency of consumption of vegetables (float).
+- `NCP`: Number of main meals (float).
+- `CH2O`: Daily water consumption (float).
+- `FAF`: Physical activity frequency (float; hours per week or similar unit).
+- `TUE`: Time using technology devices (float; hours per day or similar unit).
+
+### Categorical type
+- `Gender`: Male/Female.
+- `family_history_with_overweight`: yes/no.
+- `FAVC`: Frequent consumption of high caloric food (yes/no).
+- `CAEC`: Consumption of food between meals (Sometimes/Frequently/Always/no).
+- `SMOKE`: Smoking habit (yes/no).
+- `SCC`: Monitoring of caloric consumption (yes/no).
+- `CALC`: Consumption of alcohol (Sometimes/Frequently/Always/no).
+- `MTRANS`: Transportation used (Public_Transportation/Automobile/etc.).
+- `NObeyesdad`: Obesity level/type (target variable; e.g., Obesity_Type_II, Normal_Weight, etc.).
+
+### Datetime type
+- None present in this dataset.
+
+## Detailed data description
+
+The dataset contains information related to demographic, lifestyle, and behavioral factors that may influence body weight and obesity. Each data point represents an individual and includes:
+
+- **Demographics:** Gender, Age.
+- **Anthropometrics:** Height, Weight.
+- **Family History:** Information about family history of overweight.
+- **Dietary Habits:** Frequency of high caloric food, vegetable consumption, number of meals, water intake, snacking habits.
+- **Lifestyle:** Smoking, alcohol consumption, physical activity, time spent on technology, use of caloric monitoring, and transportation means.
+
+**Notable patterns and characteristics:**
+- Most categorical features are 'yes/no' or have limited options (e.g., Sometimes/Frequently/Always/no).
+- Numerical features are continuous and may require normalization.
+- The target variable (`NObeyesdad`) is multi-class, indicating different levels and types of obesity or normal/insufficient weight.
+- No datetime or time-series features are present.
+- The data may include outliers (e.g., high weights or heights) and missing values appear unlikely from the sample provided.
+
+## Target Variable
+
+- **Target:** `NObeyesdad`
+- **Description:** Categorical variable indicating the obesity weight status of the individual. Example classes include:
+    - Insufficient_Weight
+    - Normal_Weight
+    - Overweight_Level_I
+    - Overweight_Level_II
+    - Obesity_Type_I
+    - Obesity_Type_II
+    - Obesity_Type_III
+
+## Submission format (if applicable)
+
+The submission file should contain:
+- `id`: Unique identifier for each individual (integer).
+- `NObeyesdad`: Predicted obesity class for each individual (string; one of the classes as in the target variable).
+
+**Example:**
+| id    | NObeyesdad         |
+|-------|--------------------|
+| 20758 | Obesity_Type_II    |
+| 20759 | Normal_Weight      |
+| ...   | ...                |
+
+- Types: `id` (integer), `NObeyesdad` (string/category)

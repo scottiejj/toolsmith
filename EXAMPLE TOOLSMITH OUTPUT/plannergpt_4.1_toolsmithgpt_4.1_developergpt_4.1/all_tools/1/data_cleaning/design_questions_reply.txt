@@ -1,0 +1,21 @@
+Based on the provided information and plan for the Data Cleaning phase, here are six key questions designed to summarize findings and provide guidance for the next phase (In-depth Exploratory Data Analysis):
+
+1. **What specific data cleaning steps were executed on each feature, and what were the outcomes?**
+   - *Purpose/Importance:* This question summarizes the actions taken for each feature during the cleaning phase, ensuring clarity on what transformations occurred and how data integrity was maintained. It sets the stage for understanding feature distributions and characteristics in the next phase.
+
+2. **Which features had missing values before cleaning, and how were they addressed? Please provide the methods used for imputation and the final state of these features.**
+   - *Purpose/Importance:* Understanding the missing value treatment is crucial for interpreting the data's completeness and reliability in the subsequent analysis. This question also guides specific areas to focus on when exploring feature relationships during EDA.
+
+3. **What outliers were identified in the dataset, and what strategies were implemented to handle them?**
+   - *Purpose/Importance:* Outliers can significantly impact statistical analyses and model performance. This question helps in assessing how outliers were managed and their potential influence on exploratory analyses, guiding the focus on robust statistical methods in the next phase.
+
+4. **Did any features undergo changes in their data types or categorical levels, and how does this impact the analysis?**
+   - *Purpose/Importance:* This question highlights any modifications in data types and categorical levels, which are critical for ensuring appropriate analytical techniques are applied during EDA. It also informs potential adjustments needed in visualization or statistical methods.
+
+5. **Were there any anomalies or implausible values detected during the cleaning process, particularly in BMI-related features, and how were these handled?**
+   - *Purpose/Importance:* Since BMI is a key indicator in obesity studies, understanding how such values were treated is vital for accurate interpretations in EDA. This question prepares for further investigation into the health implications of the cleaned data.
+
+6. **What key insights or patterns emerged from the data cleaning phase that should be prioritized in the In-depth Exploratory Data Analysis?**
+   - *Purpose/Importance:* This reflective question encourages synthesizing findings from the data cleaning phase, highlighting areas of interest or concern that should be explored further in EDA, thereby ensuring that the analysis is focused and relevant to the competition goals.
+
+These questions collectively provide a comprehensive overview of the Data Cleaning phase while guiding the transition to In-depth Exploratory Data Analysis.

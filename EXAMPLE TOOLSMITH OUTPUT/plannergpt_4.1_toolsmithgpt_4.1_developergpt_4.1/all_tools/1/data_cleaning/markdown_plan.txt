@@ -1,0 +1,43 @@
+## PLAN
+
+### STEP 1
+Task: Enforce correct data types and clean invalid values for all features.
+Tools, involved features and correct parameters:
+- **numerical_type_enforcer**: For numerical features (`Age`, `Height`, `Weight`, `FCVC`, `NCP`, `CH2O`, `FAF`, `TUE`), coerce to float, fill invalids with median (computed on train, applied to both train/test).
+- **gender_cleaner**: For `Gender`, valid values `("Male", "Female")`, fill invalid/missing with mode from train.
+- **categorical_binary_cleaner**: For binary categorical features (`family_history_with_overweight`, `FAVC`, `SMOKE`, `SCC`), valid values `("yes", "no")`, fill invalid/missing with mode.
+- **ordinal_categorical_cleaner**: For ordinal categorical features (`CAEC`, `CALC`), valid order `["no", "Sometimes", "Frequently", "Always"]`, fill invalid/missing with mode or `"no"` if ambiguous.
+- **Manual harmonization**: For `MTRANS`, normalize string values and harmonize categories between train and test.
+Expected output or Impact on data: All features have correct types, no invalid values, and categories are consistent across train and test.
+Constraints: Do not drop or encode features at this stage; changes must be applied identically to train and test (except `NObeyesdad`, which is train-only).
+
+### STEP 2
+Task: Handle and impute missing values for all features.
+Tools, involved features and correct parameters:
+- For numerical features, after type enforcement, use **impute_missing_by_group_median**:
+  - For `Height`, `Weight`, `Age`: group by `Gender` for imputation.
+  - For `FCVC`, `NCP`, `CH2O`, `FAF`, `TUE`: use overall median.
+- For categorical features, fill missing with mode or specified fill value in related cleaning tools.
+Expected output or Impact on data: No missing values in any feature in either train or test set.
+Constraints: Imputation statistics must be based on train data and applied identically to test; do not use target or future data for imputation.
+
+### STEP 3
+Task: Detect and treat outliers and implausible values in numerical features, especially BMI-related.
+Tools, involved features and correct parameters:
+- **bmi_validator_and_flagger**: Calculate BMI from `Height` and `Weight`, flag implausible BMI (`BMI < 10` or `BMI > 80`), add `BMI` and `BMI_flag` columns.
+- For rows with `BMI_flag==True`:
+  - If BMI is just outside thresholds and height/weight plausible, use **cap_outliers** at 1st/99th percentiles.
+  - If BMI is far outside plausible range, drop record (train only) or cap/impute in test.
+- **iqr_outlier_flagger**: For each numerical feature, flag outliers (`iqr_mult=1.5`).
+- **cap_outliers**: Winsorize flagged numerical outliers at 1st/99th percentiles.
+Expected output or Impact on data: No implausible BMI or extreme outliers; distributions are robust and realistic.
+Constraints: Do not drop any rows from test; only cap or impute. Train set may drop records only if BMI is far outside plausible human range.
+
+### STEP 4
+Task: Harmonize categorical feature levels and handle rare categories.
+Tools, involved features and correct parameters:
+- **handle_rare_categories**: For categorical features with >5 unique categories or rare entries (especially `MTRANS`, `CAEC`, `CALC`), set `threshold=10`, replace rare classes with `"Rare"`.
+- Check that all test categories exist in train; if not, map to `"Rare"`.
+- Harmonize spelling/capitalization of all categorical features between train and test.
+Expected output or Impact on data: All categorical features have consistent, clean, and manageable value sets across train and test.
+Constraints: Do not drop rows for rare categories; only relabel. No feature encoding or transformation at this phase.

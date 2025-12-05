@@ -12,7 +12,12 @@ from memory import Memory, split_sklearn, split_tools
 
 
 class RetrieveTool:
-    def __init__(self, model: str, embeddings: OpenaiEmbeddings, doc_path: str = 'multi_agents/tools/ml_tools_doc', collection_name: str = 'tools'):
+    def __init__(self, model: str, embeddings: OpenaiEmbeddings, doc_path: str, collection_name: str = 'tools'):
+        """
+        doc_path: directory containing per-phase generated tool docs, e.g.,
+                  multi_agents/competition/titanic/data_cleaning/data_cleaning_generated_tools
+        """
+                
         self.llm = model
         self.embeddings = embeddings
         self.doc_path = os.path.join(os.getcwd(), doc_path)
@@ -65,26 +70,52 @@ text: {content}
         
         return conclusion
     
-    def create_db_tools(self, doc_type: str = '.md'):
-        md_path = []
-        if os.path.exists(self.doc_path) and os.path.isdir(self.doc_path):
-            for file in os.listdir(self.doc_path):
-                # Ensure it checks only files in 'pandas/reference' and not sub-folders
-                file_path = os.path.join(self.doc_path, file)
-                # read .rst files
-                if os.path.isfile(file_path) and file.endswith(doc_type):
-                    md_path.append(file_path)
+    # def create_db_tools(self, doc_type: str = '.md'):
+    #     md_path = []
+    #     if os.path.exists(self.doc_path) and os.path.isdir(self.doc_path):
+    #         for file in os.listdir(self.doc_path):
+    #             # Ensure it checks only files in 'pandas/reference' and not sub-folders
+    #             file_path = os.path.join(self.doc_path, file)
+    #             # read .rst files
+    #             if os.path.isfile(file_path) and file.endswith(doc_type):
+    #                 md_path.append(file_path)
 
-        # Read the HTML files
+    #     # Read the HTML files
+    #     num_data = self.db.check_collection_none()
+    #     if num_data == 0:
+    #         for path in tqdm(md_path):
+    #             with open(path, 'r') as f:
+    #                 content = f.read()
+    #                 chunks = split_tools(content)
+    #                 self.db.insert_vectors(chunks, path.split('/')[-1])
+
+    def create_db_tools(self, doc_type: str = '.md'):
+        md_paths = []
+        if os.path.isdir(self.doc_path):
+            for file in os.listdir(self.doc_path):
+                file_path = os.path.join(self.doc_path, file)
+                if os.path.isfile(file_path) and file.endswith(doc_type):
+                    md_paths.append(file_path)
+
         num_data = self.db.check_collection_none()
         if num_data == 0:
-            for path in tqdm(md_path):
-                with open(path, 'r') as f:
+            for path in tqdm(md_paths):
+                with open(path, 'r', encoding='utf-8') as f:
                     content = f.read()
                     chunks = split_tools(content)
-                    self.db.insert_vectors(chunks, path.split('/')[-1])
+                    # store filename to filter by phase later
+                    self.db.insert_vectors(chunks, os.path.basename(path))
 
-    def query_tools(self, query: str, state_name: str='data_cleaning'):
-        label = state_name + '_tools.md'
-        results = self.db.search_context_with_metadatas(query, label)
+
+    # def query_tools(self, query: str, state_name: str='data_cleaning'):
+    #     label = state_name + '_tools.md'
+    #     results = self.db.search_context_with_metadatas(query, label)
+    #     return results['documents'][0][0]
+
+    def query_tools(self, query: str, phase_filename: str):
+        """
+        phase_filename: e.g., 'data_cleaning_tools.md'
+        Returns the top matching document chunk for the requested phase file.
+        """
+        results = self.db.search_context_with_metadatas(query, phase_filename)
         return results['documents'][0][0]

@@ -1,0 +1,131 @@
+=== TRAIN DATA AUDIT ===
+ID column uniqueness: True, missing: 0
+
+Numerical Features Summary (Train):
+  feature       mean        std  ...         75%         max  missing_count
+0     Age  23.841804   5.688072  ...   26.000000   61.000000              0
+1  Height   1.700245   0.087312  ...    1.762887    1.975663              0
+2  Weight  87.887768  26.379443  ...  111.600553  165.057269              0
+3    FCVC   2.445908   0.533218  ...    3.000000    3.000000              0
+4     NCP   2.761332   0.705375  ...    3.000000    4.000000              0
+5    CH2O   2.029418   0.608467  ...    2.549617    3.000000              0
+6     FAF   0.981747   0.838302  ...    1.587406    3.000000              0
+7     TUE   0.616756   0.602113  ...    1.000000    2.000000              0
+
+[8 rows x 9 columns]
+
+Categorical Features Summary (Train):
+                          feature  num_unique  ... most_common_freq  missing_count
+0                          Gender           2  ...            10422              0
+1  family_history_with_overweight           2  ...            17014              0
+2                            FAVC           2  ...            18982              0
+3                            CAEC           4  ...            17529              0
+4                           SMOKE           2  ...            20513              0
+5                             SCC           2  ...            20071              0
+6                            CALC           3  ...            15066              0
+7                          MTRANS           5  ...            16687              0
+8                      NObeyesdad           7  ...             4046              0
+
+[9 rows x 5 columns]
+
+=== TEST DATA AUDIT ===
+ID column uniqueness: True, missing: 0
+
+Numerical Features Summary (Test):
+  feature       mean        std  ...         75%         max  missing_count
+0     Age  23.952740   5.799814  ...   26.000000   61.000000              0
+1  Height   1.698934   0.088761  ...    1.760710    1.980000              0
+2  Weight  87.384504  26.111819  ...  111.157811  165.057269              0
+3    FCVC   2.442898   0.531606  ...    3.000000    3.000000              0
+4     NCP   2.750610   0.710927  ...    3.000000    4.000000              0
+5    CH2O   2.032044   0.611230  ...    2.552388    3.000000              0
+6     FAF   0.974532   0.840361  ...    1.571865    3.000000              0
+7     TUE   0.611033   0.608005  ...    1.000000    2.000000              0
+
+[8 rows x 9 columns]
+
+Categorical Features Summary (Test):
+                          feature  num_unique  ... most_common_freq  missing_count
+0                          Gender           2  ...             6965              0
+1  family_history_with_overweight           2  ...            11384              0
+2                            FAVC           2  ...            12583              0
+3                            CAEC           4  ...            11689              0
+4                           SMOKE           2  ...            13660              0
+5                             SCC           2  ...            13376              0
+6                            CALC           4  ...             9979              0
+7                          MTRANS           5  ...            11111              0
+
+[8 rows x 5 columns]
+
+Plotting distributions for numerical features (Train)...
+Numerical distributions (train) saved to: /Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/pre_eda/images/numerical_distributions_train.png
+
+Plotting counts for categorical features (Train)...
+Categorical counts (train) saved to: /Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/pre_eda/images/categorical_counts_train.png
+
+Detecting outliers in numerical features (Train)...
+  feature  outlier_count  outlier_ratio method  threshold
+0     Age           1074       0.051739    iqr        1.5
+1  Height              4       0.000193    iqr        1.5
+2  Weight              0       0.000000    iqr        1.5
+3    FCVC              0       0.000000    iqr        1.5
+4     NCP           6052       0.291550    iqr        1.5
+5    CH2O              0       0.000000    iqr        1.5
+6     FAF              0       0.000000    iqr        1.5
+7     TUE              0       0.000000    iqr        1.5
+
+Detecting outliers in numerical features (Test)...
+  feature  outlier_count  outlier_ratio method  threshold
+0     Age            791       0.057153    iqr        1.5
+1  Height              4       0.000289    iqr        1.5
+2  Weight              0       0.000000    iqr        1.5
+3    FCVC              0       0.000000    iqr        1.5
+4     NCP           4095       0.295882    iqr        1.5
+5    CH2O              0       0.000000    iqr        1.5
+6     FAF              0       0.000000    iqr        1.5
+7     TUE              0       0.000000    iqr        1.5
+
+BMI feature analysis (Train)...
+BMI Summary (Train):
+count    20758.000000
+mean        30.241842
+std          8.333932
+min         12.868541
+25%         24.088223
+50%         29.384757
+75%         37.011168
+max         54.997991
+dtype: float64
+BMI vs Target plot (train) saved to: /Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/pre_eda/images/bmi_vs_target_train.png
+
+BMI feature analysis (Test)...
+BMI Summary (Test):
+count    13840.000000
+mean        30.122959
+std          8.273030
+min         12.812830
+25%         23.875115
+50%         29.384757
+75%         36.727290
+max         51.227736
+dtype: float64
+
+Target variable ('NObeyesdad') distribution (Train):
+                 class  count  proportion
+0     Obesity_Type_III   4046    0.194913
+1      Obesity_Type_II   3248    0.156470
+2        Normal_Weight   3082    0.148473
+3       Obesity_Type_I   2910    0.140187
+4  Insufficient_Weight   2523    0.121544
+5  Overweight_Level_II   2522    0.121495
+6   Overweight_Level_I   2427    0.116919
+BMI vs Target boxplot saved to: /Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/pre_eda/images/bmi_vs_target_boxplot.png
+Weight vs Target boxplot saved to: /Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/pre_eda/images/weight_vs_target_boxplot.png
+
+Crosstab: Gender vs NObeyesdad (Train):
+NObeyesdad  Insufficient_Weight  ...  Overweight_Level_II
+Gender                           ...                     
+Female                     1621  ...                  755
+Male                        902  ...                 1767
+
+[2 rows x 7 columns]

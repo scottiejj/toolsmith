@@ -1,0 +1,21 @@
+Here are six key questions designed to summarize the findings from the Preliminary Exploratory Data Analysis (EDA) phase and provide guidance for the next phase, Data Cleaning:
+
+1. **What unique features were identified in the datasets, and did any of them exhibit unexpected data types or distributions?**
+   - Purpose: This question helps to summarize the initial understanding of the features, ensuring that any discrepancies in data types or distributions are flagged for cleaning.
+
+2. **What is the extent of missing values across numerical and categorical features, and how might these affect the analysis?**
+   - Purpose: Identifying missing values is crucial for the data cleaning process. This question will help assess the scale of the problem and prioritize which features need attention.
+
+3. **Were any outliers detected in the numerical features, particularly for `Age`, `Height`, and `Weight`, and what implications could these outliers have on the analysis?**
+   - Purpose: Understanding the presence and potential impact of outliers is essential for subsequent data cleaning. This question guides the team to decide whether to remove or correct these values.
+
+4. **How are the target variable (`NObeyesdad`) distributions shaped by the other features, and are there any anomalies in these relationships that need to be addressed?**
+   - Purpose: This question focuses on the target variable and its relationship with other features, highlighting areas that may require special attention during cleaning to ensure accurate modeling.
+
+5. **What insights were gained regarding the relationships between features (e.g., dietary habits, lifestyle factors) and obesity levels, and how should these inform the data cleaning process?**
+   - Purpose: This encourages reflection on the findings from the EDA that could guide how to handle specific features, whether through imputation, transformation, or removal.
+
+6. **What specific data characteristics or inconsistencies were observed that could hinder model performance, and what steps should be taken in the next phase to address them?**
+   - Purpose: This question encourages the team to think critically about the potential challenges identified in the EDA and plan actionable steps for the data cleaning phase to enhance data quality.
+
+These questions are designed to facilitate a smooth transition from Preliminary EDA to Data Cleaning by summarizing critical findings and identifying key areas for improvement.

@@ -1,0 +1,79 @@
+# Data Information
+
+## Data Type
+
+### ID type
+- `id`: Unique identifier for each data point. This column should NOT be used as a feature for model training.
+
+### Numerical type
+- `Age`: Age of the individual (float).
+- `Height`: Height in meters (float).
+- `Weight`: Weight in kilograms (float).
+- `FCVC`: Frequency of consumption of vegetables (float).
+- `NCP`: Number of main meals (float).
+- `CH2O`: Water consumption (liters, float).
+- `FAF`: Physical activity frequency (float, hours per week or similar).
+- `TUE`: Time using technology devices (float, hours per day or similar).
+- `BMI`: Calculated Body Mass Index (float).
+
+**Flag/Outlier Columns (Boolean, but numerical in storage):**
+- `BMI_flag`
+- `Age_outlier_flag`
+- `Height_outlier_flag`
+- `Weight_outlier_flag`
+- `FCVC_outlier_flag`
+- `NCP_outlier_flag`
+- `CH2O_outlier_flag`
+- `FAF_outlier_flag`
+- `TUE_outlier_flag`
+- `BMI_outlier_flag`
+
+### Categorical type
+- `Gender`: 'Male' or 'Female'.
+- `family_history_with_overweight`: 'yes' or 'no'.
+- `FAVC`: Frequent consumption of high calorie food ('yes' or 'no').
+- `CAEC`: Consumption of food between meals ('No', 'Sometimes', 'Frequently', 'Always').
+- `SMOKE`: 'yes' or 'no'.
+- `SCC`: Monitors calorie consumption ('yes' or 'no').
+- `CALC`: Consumption of alcohol ('No', 'Sometimes', etc.).
+- `MTRANS`: Transportation used ('Automobile', 'Public_transportation', etc.).
+- `NObeyesdad`: Obesity level (target, e.g., 'Normal_Weight', 'Overweight_Level_I', etc.). **(train set only)**
+
+### Datetime type
+- No datetime features are present in the data.
+
+## Detailed data description
+
+- The dataset contains health, lifestyle, and demographic features for individuals, aimed at predicting obesity levels.
+- Each record is uniquely identified by the `id` column.
+- The main features include anthropometric data (`Age`, `Height`, `Weight`, `BMI`), dietary habits (`FAVC`, `FCVC`, `NCP`, `CAEC`), lifestyle factors (`SMOKE`, `CH2O`, `SCC`, `FAF`, `TUE`, `CALC`, `MTRANS`), and family history (`family_history_with_overweight`).
+- The `BMI` is pre-computed for each individual and is used to flag obesity-related outliers via the `BMI_flag` and `BMI_outlier_flag`.
+- Several features have associated outlier flags (e.g., `Age_outlier_flag`, `FCVC_outlier_flag`, etc.), which are boolean indicators of anomalous values.
+- The target variable (`NObeyesdad`) classifies individuals into various obesity categories such as `Insufficient_Weight`, `Normal_Weight`, `Overweight_Level_I`, `Overweight_Level_II`, `Obesity_Type_I`, `Obesity_Type_II`, and `Obesity_Type_III`.
+- The dataset appears to be well-cleaned, with no missing values in the sample provided, and ready for modeling.
+- In the test set, the target variable column is absent, aligning with common machine learning practice.
+
+## Target Variable
+
+- **Name:** `NObeyesdad`
+- **Description:** Categorical variable indicating the individual's obesity level, with possible classes such as:
+  - `Insufficient_Weight`
+  - `Normal_Weight`
+  - `Overweight_Level_I`
+  - `Overweight_Level_II`
+  - `Obesity_Type_I`
+  - `Obesity_Type_II`
+  - `Obesity_Type_III`
+
+## Submission format (if applicable)
+
+- The submission file typically should include:
+  - `id` (integer): Unique identifier for each row (as in the test set).
+  - `NObeyesdad` (string): Predicted obesity level for each individual.
+- Example submission:
+  | id    | NObeyesdad         |
+  |-------|--------------------|
+  | 20758 | Obesity_Type_I     |
+  | 20759 | Normal_Weight      |
+  | ...   | ...                |
+- All columns except `id` and the predicted `NObeyesdad` should be excluded from the submission file.

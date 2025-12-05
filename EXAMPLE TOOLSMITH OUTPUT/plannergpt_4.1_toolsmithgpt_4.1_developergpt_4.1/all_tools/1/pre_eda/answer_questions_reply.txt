@@ -1,0 +1,90 @@
+# RESPONSE: MARKDOWN FORMAT
+
+### Question 1
+What files did you process? Which files were generated? Answer with detailed file path.
+
+- **Processed Files:**
+  - Training Data: `/Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/train.csv`
+  - Testing Data: `/Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/test.csv`
+
+- **Generated Files:**
+  - Numerical distributions plot for the train data: `/Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/pre_eda/images/numerical_distributions_train.png`
+  - Categorical counts plot for the train data: `/Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/pre_eda/images/categorical_counts_train.png`
+  - BMI vs Target plot for the train data: `/Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/pre_eda/images/bmi_vs_target_train.png`
+  - Weight vs Target plot for the train data: `/Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/pre_eda/images/weight_vs_target_boxplot.png`
+
+### Question 2
+Which features were involved in this phase? What changes did they undergo? If any feature types were modified, answer which features are modified and how they are modified. If any features were deleted or created, answer which features are deleted or created and provide detailed explanations. (This is a FIXED question for each phase.)
+
+- **Involved Features:**
+  - **Numerical Features:**
+    - `Age`, `Height`, `Weight`, `FCVC`, `NCP`, `CH2O`, `FAF`, `TUE`
+  - **Categorical Features:**
+    - `Gender`, `family_history_with_overweight`, `FAVC`, `CAEC`, `SMOKE`, `SCC`, `CALC`, `MTRANS`, `NObeyesdad` (target variable)
+
+- **Changes:**
+  - No features were deleted or created in this phase.
+  - Feature types remain unchanged as they are primarily descriptive analyses, with no modifications to data types or values.
+
+### Question 3
+What unique features were identified in the datasets, and did any of them exhibit unexpected data types or distributions?
+
+- The dataset includes features related to demographics, lifestyle, and obesity-related health factors.
+- **Unique features:**
+  - `id`: Unique identifier (integer).
+  - `NObeyesdad`: Multi-class categorical variable indicating obesity levels.
+- **Unexpected Data Types/Distributions:**
+  - All features appear to have appropriate data types as per their definitions.
+  - Some numerical features such as `Weight` show a multimodal distribution, which may require further investigation but is not necessarily unexpected.
+
+### Question 4
+What is the extent of missing values across numerical and categorical features, and how might these affect the analysis?
+
+- **Missing Values:**
+  - All features across both train and test datasets report zero missing values.
+- **Implications:**
+  - The absence of missing values suggests that there should be no immediate concerns about data integrity or the need for imputation. However, this should be continually monitored in subsequent phases for any updates or changes in data.
+
+### Question 5
+Were any outliers detected in the numerical features, particularly for `Age`, `Height`, and `Weight`, and what implications could these outliers have on the analysis?
+
+- **Outliers Detected:**
+  - Outliers were identified using an IQR method across numerical features including `Age`, `Height`, and `Weight`.
+  - Specific counts and ratios of outliers were provided in the output.
+  
+- **Implications:**
+  - The presence of outliers could skew the results of statistical analyses, such as means and correlations, and may influence model performance. They will need to be addressed in the data cleaning phase.
+
+### Question 6
+How are the target variable (`NObeyesdad`) distributions shaped by the other features, and are there any anomalies in these relationships that need to be addressed?
+
+- The distribution of the target variable `NObeyesdad` was analyzed through counts and visualizations.
+- **Insights:**
+  - Different obesity types have distinct BMI distributions, indicating clear separations that can inform model training.
+  - Some overlaps between categories may suggest the need for careful modeling to differentiate between similar classes.
+  
+- **Anomalies:**
+  - No major anomalies were noted, but the need for further exploration of overlapping categories may inform future model complexity.
+
+### Question 7
+What insights were gained regarding the relationships between features (e.g., dietary habits, lifestyle factors) and obesity levels, and how should these inform the data cleaning process?
+
+- **Insights:**
+  - Features such as frequency of vegetable consumption (`FCVC`), number of meals (`NCP`), and physical activity (`FAF`) show patterns that correlate with obesity levels.
+  - The analysis indicated a need to focus on dietary habits and lifestyle factors that may contribute to obesity.
+  
+- **Data Cleaning Implications:**
+  - Features that exhibit high variability or outliers should be examined more closely for potential errors and corrections in the next phase.
+  - Consideration should also be given to how categorical variables interact and if they need encoding for model training.
+
+### Question 8
+What specific data characteristics or inconsistencies were observed that could hinder model performance, and what steps should be taken in the next phase to address them?
+
+- **Characteristics and Inconsistencies:**
+  - Outliers in numerical features could skew analyses and predictions.
+  - Some categorical variables may overlap in meaning or responses, complicating interpretation.
+  
+- **Next Steps:**
+  - Address outliers by analyzing their sources and potentially removing or transforming them.
+  - Investigate categorical features for redundancy or overlap and consider consolidating categories where appropriate.
+  - Begin preparing for feature engineering by exploring interactions between key variables.

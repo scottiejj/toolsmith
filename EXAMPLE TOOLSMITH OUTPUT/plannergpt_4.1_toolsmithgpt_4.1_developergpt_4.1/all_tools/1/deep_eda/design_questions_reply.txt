@@ -1,0 +1,21 @@
+Based on the provided information and plan for the In-depth Exploratory Data Analysis phase, here are six key questions designed to summarize the findings and provide guidance for the next phase of Feature Engineering:
+
+1. **What are the key statistical findings regarding each numerical feature in relation to the target variable 'NObeyesdad'?**
+   - *Purpose:* This question aims to summarize the statistical insights gathered through the advanced univariate and bivariate analysis, highlighting which numerical features show significant variations across obesity classes. This information will guide the selection of features for engineering new variables that could enhance model performance.
+
+2. **Which categorical features demonstrated significant associations with the target variable during the analysis? What specific patterns emerged?**
+   - *Purpose:* Understanding the significant categorical features and their relationships with the target variable will help identify which categorical variables may require encoding, aggregation, or transformation in the Feature Engineering phase.
+
+3. **What potential feature interactions were identified, and how might they influence the target variable?**
+   - *Purpose:* Identifying interactions between features can reveal complex relationships that might not be captured by individual features alone. This insight will inform the creation of interaction terms or composite features that could improve the model's predictive capability.
+
+4. **What multicollinearity issues were identified among the numerical features, and which features should be considered for removal or combination?**
+   - *Purpose:* Addressing multicollinearity is essential for feature stability and interpretability. This question will provide clarity on which features may need to be combined or excluded to enhance the model's performance in the next phase.
+
+5. **Were there any surprising patterns or insights regarding obesity class segmentation and lifestyle factors that could inform new feature creation?**
+   - *Purpose:* Highlighting unexpected findings can spark innovative ideas for new features that encapsulate these insights, such as lifestyle risk scores or composite indices reflecting multiple factors that influence obesity.
+
+6. **Based on the visualizations and statistical tests, which features or combinations of features would you prioritize for engineering new variables, and what transformations do you propose?**
+   - *Purpose:* This question directly connects the findings from the exploratory analysis to actionable steps in feature engineering, enabling the planner to prioritize which features to focus on and how to transform them for optimal model input.
+
+These questions will help encapsulate the findings from the In-depth Exploratory Data Analysis phase while providing a clear pathway and actionable insights for the Feature Engineering phase.

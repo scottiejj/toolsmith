@@ -1,0 +1,75 @@
+# Competition Information
+
+## 1. Competition Overview
+The "obesity_risks" competition is a part of the Kaggle Playground Series, focusing on predicting obesity risk in individuals related to cardiovascular diseases. The competition runs from February 1, 2024, to March 1, 2024, and submissions are evaluated based on accuracy.
+
+## 2. Files
+- **train.csv**: The training dataset containing features and the target variable `NObeyesdad`.
+- **test.csv**: The test dataset for which predictions need to be made.
+- **sample_submission.csv**: A template to demonstrate the required submission format.
+
+## 3. Problem Definition
+Participants are tasked with predicting the obesity classification of individuals based on various demographic and lifestyle features. The target variable `NObeyesdad` categorizes individuals into different obesity risk levels.
+
+## 4. Data Information
+### 4.1 Data type
+#### 4.1.1 ID type
+- `id`: Unique identifier for each data point (not used in model training).
+
+#### 4.1.2 Numerical type
+- `Age`: Age of individuals (in years).
+- `Height`: Height of individuals (in meters).
+- `Weight`: Weight of individuals (in kilograms).
+- `CH2O`: Daily water intake (liters).
+- `FAF`: Frequency of physical activity.
+- `TUE`: Time spent exercising (in hours).
+- `CALC`: Daily calcium intake (grams).
+
+#### 4.1.3 Categorical type
+- `Gender`: Gender of individuals (Male/Female).
+- `family_history_with_overweight`: Family history of overweight (yes/no).
+- `FAVC`: Food intake frequency (yes/no).
+- `FCVC`: Frequency of vegetable consumption (numerical scale).
+- `NCP`: Number of meals consumed per day (numerical scale).
+- `CAEC`: Consumption of food between meals (categorical).
+- `SMOKE`: Smoking status (yes/no).
+- `SCC`: Self-calculated calories (yes/no).
+- `MTRANS`: Means of transportation (categorical).
+- `NObeyesdad`: Level of obesity (target variable).
+
+#### 4.1.4 Datetime type
+- None.
+
+### 4.2 Detailed data description
+The dataset consists of training and test segments, capturing demographic and lifestyle information. The target variable `NObeyesdad` classifies individuals into obesity levels ranging from "Insufficient Weight" to "Obesity Type III." The training data includes various age groups, height and weight variations, and lifestyle behaviors.
+
+## 5. Target Variable
+The target variable `NObeyesdad` categorizes obesity levels into the following classes:
+- "Insufficient Weight"
+- "Normal Weight"
+- "Overweight Level I"
+- "Overweight Level II"
+- "Obesity Type I"
+- "Obesity Type II"
+- "Obesity Type III"
+
+## 6. Evaluation Metrics
+Submissions will be evaluated based on the accuracy score, which measures the proportion of correctly predicted classifications.
+
+## 7. Submission Format
+The submission file must include the following columns:
+- `id`: Unique identifier for each data point.
+- `NObeyesdad`: Predicted obesity classification.
+
+An example submission format:
+```
+id,NObeyesdad
+20758,Normal_Weight
+20759,Normal_Weight
+20760,Obesity Type I
+```
+
+## 8. Other Key Aspects
+- The competition utilizes a synthetically generated dataset, allowing for a balance between real-world data characteristics and confidentiality of test labels.
+- Participants are encouraged to explore data visualizations, clustering, and exploratory data analysis (EDA) as part of their solutions.
+- Prizes consist of Kaggle merchandise, with limitations on multiple wins by the same individual.

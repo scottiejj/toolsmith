@@ -1,0 +1,141 @@
+
+import os
+import pandas as pd
+
+# File paths
+data_dir = '/Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/'
+train_path = os.path.join(data_dir, 'train.csv')
+test_path = os.path.join(data_dir, 'test.csv')
+
+# Load data
+train = pd.read_csv(train_path)
+test = pd.read_csv(test_path)
+
+# Work on copies
+train_clean = train.copy()
+test_clean = test.copy()
+
+# 1. Numerical columns
+num_cols = ['Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']
+
+# Fill invalids with train median (compute median for each col in train, apply to both)
+num_medians = {col: train_clean[col].median() for col in num_cols}
+
+for col in num_cols:
+    train_clean = numerical_type_enforcer(train_clean, cols=[col], coerce=True, fill_invalid_with=num_medians[col])
+    test_clean = numerical_type_enforcer(test_clean, cols=[col], coerce=True, fill_invalid_with=num_medians[col])
+
+# 2. Gender
+train_gender_mode = train_clean['Gender'].mode()[0] if train_clean['Gender'].mode().size > 0 else "Female"
+train_clean = gender_cleaner(train_clean, col='Gender', valid_values=("Male", "Female"), fill_value=train_gender_mode)
+test_clean = gender_cleaner(test_clean, col='Gender', valid_values=("Male", "Female"), fill_value=train_gender_mode)
+
+# 3. Binary Categorical Features
+binary_cols = ['family_history_with_overweight', 'FAVC', 'SMOKE', 'SCC']
+for col in binary_cols:
+    mode = train_clean[col].mode()[0] if train_clean[col].mode().size > 0 else "no"
+    train_clean = categorical_binary_cleaner(train_clean, col=col, valid_values=("yes", "no"), fill_value=mode)
+    test_clean = categorical_binary_cleaner(test_clean, col=col, valid_values=("yes", "no"), fill_value=mode)
+
+# 4. Ordinal Categorical Features
+ordinal_cols = ['CAEC', 'CALC']
+ordinal_order = ["no", "Sometimes", "Frequently", "Always"]
+for col in ordinal_cols:
+    train_mode = train_clean[col].mode()[0] if train_clean[col].mode().size > 0 else "no"
+    train_clean = ordinal_categorical_cleaner(train_clean, col=col, valid_order=ordinal_order, fill_value=train_mode)
+    test_clean = ordinal_categorical_cleaner(test_clean, col=col, valid_order=ordinal_order, fill_value=train_mode)
+
+# 5. Manual Harmonization: MTRANS
+# Normalize string values (strip, lower, replace spaces/underscores for harmonization)
+def harmonize_mtrans(series):
+    return (
+        series.astype(str)
+        .str.strip()
+        .str.replace(' ', '_')
+        .str.replace('/', '_')
+        .str.replace('-', '_')
+        .str.replace('__', '_')
+        .str.lower()
+        .str.capitalize()
+    )
+
+train_clean['MTRANS'] = harmonize_mtrans(train_clean['MTRANS'])
+test_clean['MTRANS'] = harmonize_mtrans(test_clean['MTRANS'])
+
+# Ensure all test categories are present in train, otherwise relabel as 'Other'
+valid_mtrans = set(train_clean['MTRANS'].unique())
+test_clean['MTRANS'] = test_clean['MTRANS'].apply(lambda x: x if x in valid_mtrans else 'Other')
+train_clean['MTRANS'] = train_clean['MTRANS'].apply(lambda x: x if x in valid_mtrans else 'Other')
+
+
+# Numerical imputation by group for relevant columns
+group_impute_cols = ['Height', 'Weight', 'Age']
+for col in group_impute_cols:
+    train_clean = impute_missing_by_group_median(train_clean, target_col=col, group_col='Gender')
+    test_clean = impute_missing_by_group_median(test_clean, target_col=col, group_col='Gender')
+
+# Remaining numerical columns: fill any leftover missing with overall train median (already handled with numerical_type_enforcer in practice)
+for col in ['FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']:
+    # If any missing remains (shouldn't, but check just in case)
+    if train_clean[col].isnull().any():
+        train_clean[col] = train_clean[col].fillna(num_medians[col])
+    if test_clean[col].isnull().any():
+        test_clean[col] = test_clean[col].fillna(num_medians[col])
+
+
+# 1. Add BMI and BMI_flag
+train_clean = bmi_validator_and_flagger(train_clean, height_col='Height', weight_col='Weight', bmi_col='BMI', flag_col='BMI_flag')
+test_clean = bmi_validator_and_flagger(test_clean, height_col='Height', weight_col='Weight', bmi_col='BMI', flag_col='BMI_flag')
+
+# 2. Handle implausible BMI
+# If BMI < 10 or BMI > 80: in train, drop if far outside; in test, cap at 1st/99th percentile
+# We'll drop train rows with BMI_flag==True and BMI < 8 or BMI > 90 (very extreme), otherwise cap
+
+far_low, far_high = 8, 90
+# For train
+extreme_bmi = train_clean[(train_clean['BMI_flag']) & ((train_clean['BMI'] < far_low) | (train_clean['BMI'] > far_high))].index
+train_clean = train_clean.drop(extreme_bmi)
+# For remaining flagged in train and all flagged in test: cap BMI, Height, Weight at 1st/99th percentile
+
+for col in ['BMI', 'Height', 'Weight']:
+    # Compute percentiles from train (excluding dropped rows)
+    lower = train_clean[col].quantile(0.01)
+    upper = train_clean[col].quantile(0.99)
+    train_clean = cap_outliers(train_clean, col=col, lower_quantile=0.01, upper_quantile=0.99)
+    test_clean = cap_outliers(test_clean, col=col, lower_quantile=0.01, upper_quantile=0.99)
+
+# 3. IQR outlier flagging and capping for all numerical features (incl. BMI)
+iqr_num_cols = num_cols + ['BMI']
+for col in iqr_num_cols:
+    train_clean = iqr_outlier_flagger(train_clean, col=col, iqr_mult=1.5, flag_col=f'{col}_outlier_flag')
+    test_clean = iqr_outlier_flagger(test_clean, col=col, iqr_mult=1.5, flag_col=f'{col}_outlier_flag')
+    train_clean = cap_outliers(train_clean, col=col, lower_quantile=0.01, upper_quantile=0.99)
+    test_clean = cap_outliers(test_clean, col=col, lower_quantile=0.01, upper_quantile=0.99)
+
+
+# Define categorical columns for rare handling
+cat_cols = ['MTRANS', 'CAEC', 'CALC']
+
+for col in cat_cols:
+    train_clean = handle_rare_categories(train_clean, col=col, threshold=10, new_category='Rare')
+    test_clean = handle_rare_categories(test_clean, col=col, threshold=10, new_category='Rare')
+    # Harmonize test categories: if not in train, set to 'Rare'
+    valid_cats = set(train_clean[col].unique())
+    test_clean[col] = test_clean[col].apply(lambda x: x if x in valid_cats else 'Rare')
+    train_clean[col] = train_clean[col].apply(lambda x: x if x in valid_cats else 'Rare')
+
+# Ensure all categorical columns are consistent in spelling/capitalization
+# For all categorical columns: strip, capitalize (except binary, which should be 'yes'/'no')
+for col in ['MTRANS', 'CAEC', 'CALC']:
+    train_clean[col] = train_clean[col].astype(str).str.strip().str.capitalize()
+    test_clean[col] = test_clean[col].astype(str).str.strip().str.capitalize()
+
+# For binary: ensure lower case and strip
+for col in binary_cols:
+    train_clean[col] = train_clean[col].str.strip().str.lower()
+    test_clean[col] = test_clean[col].str.strip().str.lower()
+
+
+# Save final cleaned datasets
+train_clean.to_csv(os.path.join(data_dir, 'cleaned_train.csv'), index=False)
+test_clean.to_csv(os.path.join(data_dir, 'cleaned_test.csv'), index=False)

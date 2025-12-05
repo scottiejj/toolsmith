@@ -1,0 +1,15 @@
+```json
+{
+    "tool_names": [
+        "create_bmi_category_feature",
+        "create_lifestyle_risk_score",
+        "create_age_lifestyle_interaction",
+        "create_bmi_weight_interaction",
+        "create_lifestyle_balance_feature",
+        "one_hot_encode_columns",
+        "target_mean_encoding",
+        "standardize_numerical_features",
+        "aggregate_flag_features"
+    ]
+}
+```

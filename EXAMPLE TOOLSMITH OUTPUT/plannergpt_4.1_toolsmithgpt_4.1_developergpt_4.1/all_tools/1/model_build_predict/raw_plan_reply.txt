@@ -1,0 +1,170 @@
+Thank you for the extensive context and tool documentation.  
+Below is a **feature-specific, four-task plan** strictly focused on the Model Building, Validation, and Prediction phase.  
+This plan ensures each step is clear about objectives, involved features, tool usage, outputs, and constraints.  
+**No data cleaning or feature engineering will be performed—only modeling using `processed_train.csv` and `processed_test.csv`.**
+
+---
+
+# MODEL BUILDING, VALIDATION, AND PREDICTION PLAN
+
+---
+
+## **TASK 1: Prepare Modeling Data Matrices (Feature Selection & Consistency)**
+
+**Objective:**  
+Ensure that the training and test feature matrices are strictly aligned and only contain model-usable features.
+
+**Actions & Feature-Level Details:**
+- **a. Separate the target and drop non-feature columns:**
+  - In `processed_train.csv`:
+    - Set `y = NObeyesdad`.
+    - Drop: `id`, `NObeyesdad`.
+    - Retain: Only columns usable as model input.
+  - In `processed_test.csv`:
+    - Drop: `id`.
+    - Ensure that the remaining columns exactly match the train features used above (in order and dtype).
+- **b. Confirm all features are numeric (float or int).**
+  - Drop any string/categorical columns not already one-hot encoded or engineered.
+  - Exclude `BMI_category` column (string) but keep its one-hot encoded columns (`BMI_category_Underweight` ... etc.).
+- **c. Explicit feature list:**
+  - Use: All non-string features from the list below, excluding `id` and `NObeyesdad`.
+    - Numerical: `Age`, `Height`, `Weight`, `FCVC`, `NCP`, `CH2O`, `FAF`, `TUE`, `BMI`, `lifestyle_risk_score`, `age_lifestyle_interaction`, `bmi_weight_interaction`, `lifestyle_balance` (raw and `_std` versions)
+    - One-hot: All binary columns for gender, family history, FAVC, CAEC, SMOKE, SCC, CALC, MTRANS, BMI_category
+    - Composite: `n_flags`
+  - **Final feature matrix shape should be identical (except test is missing target column).**
+
+**Tools:**  
+- Pandas for DataFrame selection, type checking, column alignment.
+
+**Expected Output:**  
+- `X_train`, `y_train` for model training/validation.
+- `X_test` for test predictions.
+- Print the final list of feature columns used and their types.
+
+**Constraints:**  
+- Do NOT re-engineer features or re-encode.
+- Do NOT touch source files—work only on memory copies for modeling.
+
+---
+
+## **TASK 2: Model Training and Cross-Validation (Up to 3 Models)**
+
+**Objective:**  
+Train and validate up to three distinct models using cross-validation, and select the top performers.
+
+**Actions & Feature-Level Details:**
+- **a. Train three models using only the features from Task 1:**
+  - **Model 1:** Logistic Regression (`fit_and_evaluate_logistic_regression`)
+    - All usable features.
+    - Use `cv=5`, `solver='liblinear'`, `max_iter=500`, `random_state=42`.
+  - **Model 2:** Random Forest (`fit_and_evaluate_random_forest`)
+    - All usable features.
+    - Use `cv=5`, `n_estimators=100`, `random_state=42`.
+  - **Model 3:** Support Vector Classifier (`fit_and_evaluate_svc`)
+    - All usable features.
+    - Use `cv=5`, `kernel='rbf'`, `C=1.0`, `gamma='scale'`, `random_state=42`.
+- **b. Use stratified cross-validation:**  
+  - Use `obesity_grouped_stratified_kfold` if possible, else scikit-learn's `StratifiedKFold` with `n_splits=5`, `shuffle=True`, `random_state=42`.
+- **c. Compare metrics:**  
+  - For each model, collect cross-validated:
+    - Accuracy (primary metric)
+    - Macro F1 score (secondary)
+  - Also print model name, mean/std of each metric, and number of features.
+
+**Tools:**  
+- Use the provided fit_and_evaluate_* functions.
+- Use `cross_validate_with_multiple_metrics` if further metrics are needed.
+
+**Expected Output:**  
+- For each model, print:
+  - Mean and std of accuracy and macro F1 (CV)
+  - Model name, number of features used.
+- Table summarizing model performances.
+
+**Constraints:**  
+- Limit to three models.
+- Use identical features for all models for fair comparison.
+- No feature selection or removal at this stage.
+
+---
+
+## **TASK 3: Final Model Selection & Test Set Prediction**
+
+**Objective:**  
+Select the best-performing model (by CV accuracy), train on full data, and generate predictions for the test set.
+
+**Actions & Feature-Level Details:**
+- **a. Select model with highest mean CV accuracy.**
+- **b. Retrain that model on the full `X_train`, `y_train` dataset using the same parameters as before.**
+- **c. Make predictions on `X_test`:**
+  - For probabilistic models (Logistic Regression, Random Forest, SVC with `probability=True`):
+    - Use `.predict_proba()` and map to class labels using `obesity_prediction_calibrator` with `method='argmax'`.
+  - For non-probabilistic models, use `.predict()`.
+- **d. If performance of two models is similar, optionally create a soft-voting ensemble using `soft_voting_ensemble_predict` (average probabilities from two best models).**
+
+**Tools:**  
+- Fitted estimator(s) from Task 2.
+- `obesity_prediction_calibrator` and `soft_voting_ensemble_predict` as needed.
+
+**Expected Output:**  
+- Print which model (or ensemble) was selected and why.
+- Print class distribution of test predictions.
+- Store/return array of predicted obesity classes for all test set rows.
+
+**Constraints:**  
+- Use only the top model (or ensemble if justified by close performance).
+- Do NOT tune or change features between CV and test set prediction.
+
+---
+
+## **TASK 4: Submission File Generation and Sanity Checks**
+
+**Objective:**  
+Format predictions for submission and perform final checks for compliance.
+
+**Actions & Feature-Level Details:**
+- **a. Use `obesity_submission_formatter` to combine test set `id` and predicted `NObeyesdad` into a DataFrame with columns `[id, NObeyesdad]`.**
+  - Ensure all `id` values appear exactly once and in correct order.
+- **b. Print summary statistics:**
+  - Value counts for predicted classes (check for missing or unexpected labels).
+  - Number of rows: should match test set.
+- **c. Save output as `submission.csv` (or as required by competition rules).**
+- **d. Print a short checklist:**
+  - Are all expected class labels present?
+  - Does the number of predictions match test set size?
+  - Is the file format exactly as per competition requirements?
+
+**Tools:**  
+- `obesity_submission_formatter`, Pandas.
+
+**Expected Output:**  
+- Submission-ready CSV file.
+- Printed confirmation of sanity checks.
+
+**Constraints:**  
+- Do NOT alter predictions after generating the file.
+- Do NOT include any extra columns or change column names/order.
+
+---
+
+# SUMMARY TABLE: FEATURE USAGE BY TASK
+
+| Task  | Feature Handling                                                                                                         |
+|-------|--------------------------------------------------------------------------------------------------------------------------|
+| 1     | Select all numeric/one-hot features (excl. id, NObeyesdad, BMI_category string)                                          |
+| 2     | Use all selected features for all three models; no further feature reduction or engineering                              |
+| 3     | Use same features as Task 2 for final model/ensemble; no retraining on different feature set                             |
+| 4     | Use only id and predicted labels for output; print value counts for predicted NObeyesdad                                 |
+
+---
+
+# IMPLEMENTATION NOTES
+
+- **Strictly avoid data cleaning, re-encoding, or transformation**—features are as processed in previous phase.
+- **All features** (except id, NObeyesdad, and string BMI_category) are included; do not drop any one-hot or composite feature.
+- **Reproducibility:** Print and log the final feature list and model parameters used.
+- **Resource limits:** Each model is trained once with cross-validation; ensemble only if two models are very close in validation performance.
+
+---
+
+**Ready to proceed to detailed execution. Please confirm or request task clarifications.**

@@ -1,0 +1,160 @@
+import sys
+import os
+import importlib.util
+import sys as _sys
+
+# Basic paths
+sys.path.extend(['.', '..', '../..', '../../..', '../../../..', 'multi_agents','multi_agents/tools', 'multi_agents/prompts'])
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+phase_module_path = os.path.join('multi_agents', 'competition', "obesity_risks", "pre_eda", "pre_eda_generated_tools", "pre_eda.py")
+
+spec = importlib.util.spec_from_file_location('phase_tools', phase_module_path)
+phase_tools = importlib.util.module_from_spec(spec)
+_sys.modules['phase_tools'] = phase_tools
+spec.loader.exec_module(phase_tools)
+from phase_tools import *  
+
+def generated_code_function():
+    import numpy as np
+    import pandas as pd
+    
+    import os
+    import pandas as pd
+    
+    # Set paths
+    data_path = '/Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/'
+    image_path = os.path.join(data_path, 'pre_eda', 'images')
+    
+    # Load data
+    train = pd.read_csv(os.path.join(data_path, 'train.csv'))
+    test = pd.read_csv(os.path.join(data_path, 'test.csv'))
+    
+    # Define columns
+    id_col = 'id'
+    target_col = 'NObeyesdad'
+    numerical_cols = ['Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']
+    categorical_cols = [
+        'Gender', 'family_history_with_overweight', 'FAVC', 'CAEC', 'SMOKE', 'SCC', 'CALC', 'MTRANS'
+    ]
+    
+    print("=== TRAIN DATA AUDIT ===")
+    # ID column
+    print(f"ID column uniqueness: {train[id_col].is_unique}, missing: {train[id_col].isnull().sum()}")
+    # Numerical summary
+    num_summary_train = summarize_numerical_features(train, numerical_cols)
+    print("\nNumerical Features Summary (Train):")
+    print(num_summary_train)
+    # Categorical summary (including target)
+    cat_summary_train = summarize_categorical_features(train, categorical_cols + [target_col])
+    print("\nCategorical Features Summary (Train):")
+    print(cat_summary_train)
+    
+    print("\n=== TEST DATA AUDIT ===")
+    print(f"ID column uniqueness: {test[id_col].is_unique}, missing: {test[id_col].isnull().sum()}")
+    # Numerical summary
+    num_summary_test = summarize_numerical_features(test, numerical_cols)
+    print("\nNumerical Features Summary (Test):")
+    print(num_summary_test)
+    # Categorical summary (without target)
+    cat_summary_test = summarize_categorical_features(test, categorical_cols)
+    print("\nCategorical Features Summary (Test):")
+    print(cat_summary_test)
+    
+    
+    import matplotlib.pyplot as plt
+    
+    # ---- Numerical distributions ----
+    print("\nPlotting distributions for numerical features (Train)...")
+    fig_num = plot_numerical_distributions(train, numerical_cols, target_col=None, n_cols=3, figsize=(16,8))
+    fig_num_path = os.path.join(image_path, 'numerical_distributions_train.png')
+    fig_num.savefig(fig_num_path)
+    plt.close(fig_num)
+    print(f"Numerical distributions (train) saved to: {fig_num_path}")
+    
+    # ---- Categorical counts ----
+    print("\nPlotting counts for categorical features (Train)...")
+    fig_cat = plot_categorical_counts(train, categorical_cols, target_col=None, n_cols=3, figsize=(16,8))
+    fig_cat_path = os.path.join(image_path, 'categorical_counts_train.png')
+    fig_cat.savefig(fig_cat_path)
+    plt.close(fig_cat)
+    print(f"Categorical counts (train) saved to: {fig_cat_path}")
+    
+    
+    # ---- Outlier detection ----
+    print("\nDetecting outliers in numerical features (Train)...")
+    outlier_train = automated_outlier_detector(train, numerical_cols, method='iqr', threshold=1.5)
+    print(outlier_train)
+    
+    print("\nDetecting outliers in numerical features (Test)...")
+    outlier_test = automated_outlier_detector(test, numerical_cols, method='iqr', threshold=1.5)
+    print(outlier_test)
+    
+    # ---- BMI analysis (Train) ----
+    print("\nBMI feature analysis (Train)...")
+    bmi_train_result = bmi_feature_analysis(train, height_col='Height', weight_col='Weight', target_col=target_col)
+    print("BMI Summary (Train):")
+    print(bmi_train_result['bmi_summary'])
+    
+    if bmi_train_result['bmi_plot'] is not None:
+        bmi_train_fig_path = os.path.join(image_path, 'bmi_vs_target_train.png')
+        bmi_train_result['bmi_plot'].savefig(bmi_train_fig_path)
+        plt.close(bmi_train_result['bmi_plot'])
+        print(f"BMI vs Target plot (train) saved to: {bmi_train_fig_path}")
+    
+    # Check for implausible BMI values (e.g., <12 or >60)
+    implausible_bmi_train = bmi_train_result['bmi_series'][(bmi_train_result['bmi_series'] < 12) | (bmi_train_result['bmi_series'] > 60)]
+    if not implausible_bmi_train.empty:
+        print("Flag: Implausible BMI values detected in train:")
+        print(implausible_bmi_train)
+    
+    # ---- BMI analysis (Test) ----
+    print("\nBMI feature analysis (Test)...")
+    bmi_test_result = bmi_feature_analysis(test, height_col='Height', weight_col='Weight')
+    print("BMI Summary (Test):")
+    print(bmi_test_result['bmi_summary'])
+    
+    implausible_bmi_test = bmi_test_result['bmi_series'][(bmi_test_result['bmi_series'] < 12) | (bmi_test_result['bmi_series'] > 60)]
+    if not implausible_bmi_test.empty:
+        print("Flag: Implausible BMI values detected in test:")
+        print(implausible_bmi_test)
+    
+    
+    # ---- Target class distribution ----
+    print("\nTarget variable ('NObeyesdad') distribution (Train):")
+    target_dist = analyze_target_distribution(train, target_col)
+    print(target_dist)
+    
+    # ---- Feature vs target boxplots ----
+    # Prioritize BMI and Weight, then Height and Age if image quota allows
+    boxplot_features = ['Weight', 'Height', 'Age']
+    bmi_col_train = bmi_train_result['bmi_series']  # Already computed
+    
+    # Add BMI as a column temporarily for plotting
+    train_with_bmi = train.copy()
+    train_with_bmi['BMI'] = bmi_col_train
+    
+    # Plot BMI vs target
+    import matplotlib.pyplot as plt
+    fig_bmi_box = feature_vs_target_boxplot(train_with_bmi, 'BMI', target_col, figsize=(8, 5))
+    bmi_box_path = os.path.join(image_path, 'bmi_vs_target_boxplot.png')
+    fig_bmi_box.savefig(bmi_box_path)
+    plt.close(fig_bmi_box)
+    print(f"BMI vs Target boxplot saved to: {bmi_box_path}")
+    
+    # Plot Weight vs target
+    fig_weight_box = feature_vs_target_boxplot(train, 'Weight', target_col, figsize=(8, 5))
+    weight_box_path = os.path.join(image_path, 'weight_vs_target_boxplot.png')
+    fig_weight_box.savefig(weight_box_path)
+    plt.close(fig_weight_box)
+    print(f"Weight vs Target boxplot saved to: {weight_box_path}")
+    
+    # Crosstab Gender vs target
+    print("\nCrosstab: Gender vs NObeyesdad (Train):")
+    gender_target_crosstab = pd.crosstab(train['Gender'], train[target_col])
+    print(gender_target_crosstab)
+    
+
+
+if __name__ == "__main__":
+    generated_code_function()

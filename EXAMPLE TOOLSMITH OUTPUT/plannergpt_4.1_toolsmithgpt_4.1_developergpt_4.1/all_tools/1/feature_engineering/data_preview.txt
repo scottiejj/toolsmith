@@ -1,0 +1,73 @@
+# Data Information
+
+## Data Type
+
+### ID type
+- **id**: Unique identifier for each data point; should NOT be used in model training.
+
+### Numerical type
+- **Age**: Age of the individual (float).
+- **Height**: Height in meters (float).
+- **Weight**: Weight in kilograms (float).
+- **FCVC**: Frequency of consumption of vegetables (float, typically 1-3).
+- **NCP**: Number of main meals (float, commonly 1-4).
+- **CH2O**: Daily water intake (float, typically 1-3).
+- **FAF**: Physical activity frequency (float, hours per week).
+- **TUE**: Time using technology (float, hours per day).
+- **BMI**: Body Mass Index, calculated from Height and Weight (float).
+- **BMI_flag**: Boolean indicating BMI outlier (False = not outlier, True = outlier).
+- **Age_outlier_flag**: Boolean for age outliers.
+- **Height_outlier_flag**: Boolean for height outliers.
+- **Weight_outlier_flag**: Boolean for weight outliers.
+- **FCVC_outlier_flag**: Boolean for FCVC outliers.
+- **NCP_outlier_flag**: Boolean for NCP outliers.
+- **CH2O_outlier_flag**: Boolean for CH2O outliers.
+- **FAF_outlier_flag**: Boolean for FAF outliers.
+- **TUE_outlier_flag**: Boolean for TUE outliers.
+- **BMI_outlier_flag**: Boolean for BMI outliers.
+
+### Categorical type
+- **Gender**: Male or Female.
+- **family_history_with_overweight**: yes or no.
+- **FAVC**: Frequent consumption of high caloric food (yes/no).
+- **CAEC**: Consumption of food between meals (No, Sometimes, Frequently, Always).
+- **SMOKE**: Smoking habit (yes/no).
+- **SCC**: Monitors daily calorie consumption (yes/no).
+- **CALC**: Consumption of alcohol (No, Sometimes, Frequently, Always).
+- **MTRANS**: Mode of transportation (Automobile, Public_transportation, etc.).
+
+#### Only in train data:
+- **NObeyesdad**: Target variable, obesity category.
+
+### Datetime type
+- None present. All variables are numerical, categorical, or boolean.
+
+## Detailed data description
+- The dataset consists of biometric, lifestyle, and behavioral characteristics of individuals, intended for obesity classification.
+- Data fields include physical measures (age, height, weight, BMI), dietary patterns (number of main meals, water consumption, vegetable and high-calorie food consumption), activity patterns (physical activity, technology use), and some medical history (family history with overweight).
+- Outlier flags are included for key numerical variables, indicating whether a value is statistically unusual.
+- Most variables are cleanly encoded as floats or clear categorical labels.
+- The train data contains the target label (`NObeyesdad`), which is a multi-class classification of obesity status (e.g., Normal_Weight, Insufficient_Weight, Overweight_Level_I/II, Obesity_Type_II/III).
+- The test data does not include the target variable, as is typical in predictive modeling scenarios.
+- There is no missing data visible in the provided sample; values are either present as floats, strings, or booleans.
+- The id field is unique for each record and should only be used for tracking or submission, not for model training.
+
+## Target Variable
+- **NObeyesdad**: The target variable; a categorical feature indicating the obesity level of the individual. Possible classes include:
+  - Insufficient_Weight
+  - Normal_Weight
+  - Overweight_Level_I
+  - Overweight_Level_II
+  - Obesity_Type_I
+  - Obesity_Type_II
+  - Obesity_Type_III
+
+## Submission format (if applicable)
+- The submission file should contain at least the following columns:
+  - **id**: Unique identifier for each sample (integer).
+  - **NObeyesdad**: Predicted class label for obesity status (string, one of the categories listed above).
+- Data types:
+  - id: integer
+  - NObeyesdad: string (categorical)
+
+*Note: For model training, all features except 'id' can be used. Outlier flags are booleans that may be useful for modeling or feature engineering.*

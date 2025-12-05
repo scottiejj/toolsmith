@@ -1,0 +1,94 @@
+# FEATURE INFO
+## TARGET VARIABLE
+NObeyesdad
+## FEATURES BEFORE THIS PHASE
+['id', 'Gender', 'Age', 'Height', 'Weight', 'family_history_with_overweight', 'FAVC', 'FCVC', 'NCP', 'CAEC', 'SMOKE', 'CH2O', 'SCC', 'FAF', 'TUE', 'CALC', 'MTRANS', 'NObeyesdad', 'BMI', 'BMI_flag', 'Age_outlier_flag', 'Height_outlier_flag', 'Weight_outlier_flag', 'FCVC_outlier_flag', 'NCP_outlier_flag', 'CH2O_outlier_flag', 'FAF_outlier_flag', 'TUE_outlier_flag', 'BMI_outlier_flag']
+## FEATURES AFTER THIS PHASE
+['id', 'Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE', 'BMI', 'BMI_category', 'lifestyle_risk_score', 'age_lifestyle_interaction', 'bmi_weight_interaction', 'lifestyle_balance', 'Age_std', 'Height_std', 'Weight_std', 'FCVC_std', 'NCP_std', 'CH2O_std', 'FAF_std', 'TUE_std', 'BMI_std', 'lifestyle_risk_score_std', 'age_lifestyle_interaction_std', 'bmi_weight_interaction_std', 'lifestyle_balance_std', 'Gender_Female', 'Gender_Male', 'family_history_with_overweight_no', 'family_history_with_overweight_yes', 'FAVC_no', 'FAVC_yes', 'CAEC_Always', 'CAEC_Frequently', 'CAEC_No', 'CAEC_Sometimes', 'SMOKE_no', 'SMOKE_yes', 'SCC_no', 'SCC_yes', 'CALC_Frequently', 'CALC_No', 'CALC_Sometimes', 'MTRANS_Automobile', 'MTRANS_Bike', 'MTRANS_Motorbike', 'MTRANS_Public_transportation', 'MTRANS_Walking', 'BMI_category_Underweight', 'BMI_category_Normal_weight', 'BMI_category_Overweight', 'BMI_category_Obesity_I', 'BMI_category_Obesity_II', 'BMI_category_Obesity_III', 'n_flags', 'NObeyesdad']
+# REPORT
+
+## QUESTIONS AND ANSWERS  
+
+### Question 1
+What files did you process? Which files were generated? Answer with detailed file path.
+### Answer 1
+The following files were processed during the feature engineering phase:
+- **Processed Input Files**:
+  - `cleaned_train.csv` located at `/Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/`
+  - `cleaned_test.csv` located at `/Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/`
+
+- **Generated Output Files**:
+  - `processed_train.csv` saved at `/Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/`
+  - `processed_test.csv` saved at `/Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/`
+
+### Question 2
+Which features were involved in this phase? What changes did they undergo? If any feature types were modified, answer which features are modified and how they are modified. If any features were deleted or created, answer which features are deleted or created and provide detailed explanations. 
+### Answer 2
+In this phase, the following changes were made to the features:
+
+- **Created Features**:
+  - **BMI_category**: Categorical feature based on BMI thresholds from WHO guidelines.
+  - **lifestyle_risk_score**: Composite score combining multiple lifestyle factors.
+  - **age_lifestyle_interaction**: Interaction term between Age and lifestyle factors.
+  - **bmi_weight_interaction**: Interaction term between BMI and Weight.
+  - **lifestyle_balance**: Score representing balance between physical activity and technology use.
+
+- **Modified Features**:
+  - Categorical features such as `Gender`, `family_history_with_overweight`, `FAVC`, `CAEC`, `SMOKE`, `SCC`, `CALC`, `MTRANS`, and `BMI_category` underwent one-hot encoding, converting them into binary columns.
+
+- **Numerical Features**:
+  - Numerical features including `Age`, `Height`, `Weight`, `FCVC`, `NCP`, `CH2O`, `FAF`, `TUE`, and others were standardized using z-score normalization.
+
+- **Deleted Features**:
+  - Individual flag columns (e.g., `_flag` features) were excluded from the final dataset, retaining only the aggregated `n_flags` column.
+
+### Question 3
+What statistical transformations were applied to the numerical features, and how might these affect model performance?
+### Answer 3
+Numerical features were standardized using z-score normalization, which transforms the data to have a mean of 0 and a standard deviation of 1. This transformation was applied to the following features:
+- Age
+- Height
+- Weight
+- FCVC
+- NCP
+- CH2O
+- FAF
+- TUE
+- BMI
+- lifestyle_risk_score
+- age_lifestyle_interaction
+- bmi_weight_interaction
+- lifestyle_balance
+
+Standardization can improve model performance by ensuring that features are on the same scale, enhancing the convergence speed of optimization algorithms and reducing bias in models sensitive to feature scaling.
+
+### Question 4
+What feature selection criteria were used to determine which features to retain, and how many features are included in the final datasets?
+### Answer 4
+Feature selection was performed manually based on the following criteria:
+- Exclusion of the `id` column as it does not contribute to model prediction.
+- Removal of duplicate or redundant features.
+- Exclusion of individual flag columns, retaining only the aggregated `n_flags` column.
+
+The final datasets included 58 features in the processed training set and 57 features in the processed test set.
+
+### Question 5
+Were there any interactions or composite features created that could significantly influence the model's predictive power? If so, which features are they?
+### Answer 5
+Yes, several interaction and composite features were created that could significantly influence the model's predictive power:
+- **age_lifestyle_interaction**: Captures how age interacts with lifestyle factors, revealing age-related trends in obesity risk.
+- **bmi_weight_interaction**: Reflects the interaction between BMI and Weight, crucial for assessing obesity risk.
+- **lifestyle_risk_score**: Aggregates multiple lifestyle factors into a single metric, simplifying the interpretation of overall lifestyle risk.
+
+These features are expected to provide additional predictive power by capturing non-linear relationships and interactions that are pivotal in health-related models.
+
+### Question 6
+What potential challenges or considerations should be kept in mind when transitioning to the Model Building phase, based on the feature engineering outcomes?
+### Answer 6
+When transitioning to the Model Building phase, consider the following challenges:
+- **Overfitting**: The introduction of numerous interaction and composite features may lead to overfitting, especially with models sensitive to feature complexity.
+- **Feature Importance**: Evaluating the importance of newly created features is essential, as some may not contribute significantly to model performance and could be candidates for exclusion.
+- **Multicollinearity**: The creation of interaction terms may introduce multicollinearity, affecting the stability and interpretability of certain models.
+- **Normalization Impact**: Ensure that all models used can effectively leverage standardized features, as some algorithms may require adaptations.
+
+These considerations will help refine the modeling strategy to ensure robust and generalizable predictions.

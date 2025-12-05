@@ -1,0 +1,15 @@
+```json
+{
+    "tool_names": [
+        "numerical_type_enforcer",
+        "gender_cleaner",
+        "categorical_binary_cleaner",
+        "ordinal_categorical_cleaner",
+        "impute_missing_by_group_median",
+        "bmi_validator_and_flagger",
+        "cap_outliers",
+        "iqr_outlier_flagger",
+        "handle_rare_categories"
+    ]
+}
+```

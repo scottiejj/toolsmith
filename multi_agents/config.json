@@ -107,27 +107,67 @@
     },
     "phase_to_ml_tools": {
         "Understand Background": [],
-        "Preliminary Exploratory Data Analysis": [],
+        "Preliminary Exploratory Data Analysis": [
+            "summary_statistics",
+            "plot_feature_distributions",
+            "correlation_heatmap",
+            "detect_univariate_outliers",
+            "check_missing_values",
+            "churn_rate_by_category",
+            "plot_churn_rate_by_category",
+            "zero_balance_proportion",
+            "analyze_balance_vs_churn",
+            "plot_balance_distribution_by_churn",
+            "churn_rate_by_binned_age",
+            "plot_churn_rate_by_binned_age"
+        ],
         "Data Cleaning": [
-            "handle_missing_values",
-            "remove_outliers",
-            "convert_column_to_datetime",
-            "fill_categorical_with_mode",
-            "plot_missing_data_heatmap",
-            "standardize_column",
-            "encode_categorical",
-            "fix_inconsistent_categories"
+            "check_missing_values",
+            "convert_column_dtype",
+            "impute_missing_with_value",
+            "iqr_outlier_mask",
+            "remove_rows_by_mask",
+            "impute_zero_balances_for_inactive",
+            "treat_high_cardinality_surnames",
+            "encode_binary_float_columns",
+            "group_rare_categories"
         ],
-        "In-depth Exploratory Data Analysis": [],
+        "In-depth Exploratory Data Analysis": [
+            "numerical_feature_summary",
+            "categorical_feature_summary",
+            "missing_data_overview",
+            "detect_outliers_iqr",
+            "feature_target_stratified_summary",
+            "interaction_correlation_heatmap",
+            "target_distribution_by_segment",
+            "categorical_target_stat_test",
+            "year_built_price_trend",
+            "segment_size_warning",
+            "multiway_interaction_boxplot"
+        ],
         "Feature Engineering": [
-            "create_polynomial_features",
-            "one_hot_encode",
-            "fill_missing_values",
-            "zscore_normalization",
-            "target_encoding",
-            "interaction_features"
+            "create_bmi_category_feature",
+            "create_lifestyle_risk_score",
+            "create_age_lifestyle_interaction",
+            "create_bmi_weight_interaction",
+            "create_lifestyle_balance_feature",
+            "standardize_numerical_features",
+            "one_hot_encode_columns",
+            "pca_feature_reduction",
+            "aggregate_flag_features",
+            "target_mean_encoding"
         ],
-        "Model Building, Validation, and Prediction": []
+        "Model Building, Validation, and Prediction": [
+            "cross_validate_with_multiple_metrics",
+            "get_classification_metrics",
+            "obesity_grouped_stratified_kfold",
+            "obesity_prediction_calibrator",
+            "obesity_submission_formatter",
+            "fit_and_evaluate_logistic_regression",
+            "fit_and_evaluate_random_forest",
+            "fit_and_evaluate_svc",
+            "soft_voting_ensemble_predict"
+        ]
     },
     "_phase_to_ml_tools": {
         "Understand Background": [],

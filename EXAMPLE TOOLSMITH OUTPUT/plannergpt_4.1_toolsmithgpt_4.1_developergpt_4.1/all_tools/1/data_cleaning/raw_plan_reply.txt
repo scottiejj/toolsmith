@@ -1,0 +1,137 @@
+Thank you for the detailed prior report and toolset. Here’s a step-by-step, feature-specific Data Cleaning plan, strictly for this phase, using only the available tools and addressing all known issues:
+
+---
+
+# Data Cleaning Plan (Phase 3)
+**Objective:**  
+To produce cleaned, analysis-ready `cleaned_train.csv` and `cleaned_test.csv` by addressing type inconsistencies, outliers, rare/invalid categories, and ensuring feature harmonization across train and test, based on EDA findings and tool availability.
+
+---
+
+## **TASK 1: Enforce Data Types and Clean Invalids**
+**Objective:** Guarantee all features are of correct type, have valid values, and are internally consistent.
+**Actions:**
+
+- **Numerical Features** (`Age`, `Height`, `Weight`, `FCVC`, `NCP`, `CH2O`, `FAF`, `TUE`):
+    - Use `numerical_type_enforcer` to coerce all to float, filling invalids with median of each feature (computed over train; apply same fill to test).
+    - Constraint: If any column has non-numeric values, they must be replaced with the median (not mean, to reduce outlier impact).
+
+- **Categorical Features:**
+    - **`Gender`:** Use `gender_cleaner` with valid values `("Male", "Female")`, fill invalid/missing with mode from train.
+    - **Binary (`family_history_with_overweight`, `FAVC`, `SMOKE`, `SCC`):**
+        - Use `categorical_binary_cleaner` (`valid_values=("yes","no")`), fill invalid/missing with mode.
+    - **Ordinal (`CAEC`, `CALC`):**
+        - Use `ordinal_categorical_cleaner` with `valid_order=["no", "Sometimes", "Frequently", "Always"]` for both.
+        - Fill any missing/invalids with mode or `"no"` if mode is ambiguous.
+    - **Multiclass Nominal (`MTRANS`):**
+        - Use string normalization (e.g., strip whitespace/lowercase if needed) and harmonize category names between train and test.
+
+- **Target Variable:** `NObeyesdad` (train only)
+    - Ensure no missing or invalid values. If issues found, flag for review.
+
+**Expected Output:**  
+All features have correct types, no obvious invalids, consistent categories.  
+**Impact:**  
+Prevents downstream modeling/type errors.  
+**Constraints:**  
+Do not drop or encode features at this stage.
+
+---
+
+## **TASK 2: Handle Missing Values and Impute as Needed**
+**Objective:**  
+Fill or correct any missing values (should be rare per EDA, but tool-driven re-check is required).
+
+**Actions:**
+- For all numerical features (as above), after type enforcement:
+    - If missing values remain, use `impute_missing_by_group_median`:
+        - For `Height`, `Weight`, and `Age`, group by `Gender` for imputation.
+        - For others, use overall median.
+        - Apply imputation logic identically to train and test.
+- For all categorical features (as above), fill missing with mode or use tool's `fill_value`.
+
+**Expected Output:**  
+No missing values in any feature in either set.  
+**Impact:**  
+Guarantees complete-case datasets for modeling.  
+**Constraints:**  
+Imputation must not use future/target data (i.e., for test use stats from train where possible).
+
+---
+
+## **TASK 3: Detect and Treat Outliers and Implausible Values**
+**Objective:**  
+Limit impact of extreme/erroneous data points, especially in BMI-related features.
+
+**Actions:**
+- **BMI Validation:**
+    - Use `bmi_validator_and_flagger` on both train and test (`height_col='Height'`, `weight_col='Weight'`, `bmi_col='BMI'`, `flag_col='BMI_flag'`).
+    - For rows where `BMI_flag==True`:
+        - If plausible (BMI just outside thresholds, and height/weight within human range), cap using `cap_outliers` at 1st/99th percentile for affected feature(s).
+        - If BMI is far outside plausible (e.g., BMI<10 or >80), drop the record (train only) or impute/cap affected feature(s) (test).
+- **Numerical Outliers:**
+    - For each numerical feature, use `iqr_outlier_flagger` (`iqr_mult=1.5`).
+    - For flagged outliers, winsorize using `cap_outliers` (`lower_quantile=0.01`, `upper_quantile=0.99`).
+    - Apply capping to both train and test for harmony.
+
+**Expected Output:**  
+No implausible BMI or extreme outliers; distributions are reasonable and robust to anomalies.  
+**Impact:**  
+Prevents spurious influence on models; ensures realistic data.  
+**Constraints:**  
+Do not drop test rows; only cap/impute.
+
+---
+
+## **TASK 4: Harmonize Categorical Feature Levels and Handle Rare Classes**
+**Objective:**  
+Ensure all categorical variables have consistent, informative levels in train/test; reduce noise from rare or spurious classes.
+
+**Actions:**
+- For all categorical features with >5 unique categories or observed rare entries in EDA (especially `MTRANS`, possibly `CAEC`, `CALC`):
+    - Use `handle_rare_categories` with `threshold=10` (or as determined from EDA) to label rare classes as `"Rare"`.
+    - Ensure all categories in test exist in train (union), and harmonize spelling/capitalization.
+    - If test set contains unseen category, map to `"Rare"`.
+
+**Expected Output:**  
+All categorical features have clean, consistent, and manageable value sets in both train and test.  
+**Impact:**  
+Prevents encoding/model errors; improves statistical power in rare categories.  
+**Constraints:**  
+Do not drop rows for rare categories; only relabel.
+
+---
+
+# Final Step: Output Cleaned Data
+- Save cleaned DataFrames as `cleaned_train.csv` and `cleaned_test.csv`.
+- Ensure consistency in columns (except for `NObeyesdad`, which is train-only), and document all cleaning steps for reproducibility.
+
+---
+
+## **Per-Feature Summary Table**
+
+| Feature                        | Type        | Cleaning Actions                                                                           |
+|---------------------------------|-------------|--------------------------------------------------------------------------------------------|
+| `id`                            | ID          | Leave unchanged (needed for submission); do not use in modeling.                           |
+| `Gender`                        | Categorical | `gender_cleaner` (standardize, fill invalids with mode); harmonize train/test.             |
+| `Age`                           | Numerical   | `numerical_type_enforcer`; impute missing/group-median by `Gender`; cap outliers.          |
+| `Height`, `Weight`              | Numerical   | As above; also, `bmi_validator_and_flagger` + treat BMI outliers; cap outliers.            |
+| `family_history_with_overweight`| Binary Cat. | `categorical_binary_cleaner`; fill invalid as mode.                                        |
+| `FAVC`, `SMOKE`, `SCC`          | Binary Cat. | As above.                                                                                  |
+| `FCVC`, `NCP`, `CH2O`, `FAF`, `TUE` | Numerical | `numerical_type_enforcer`; impute overall median; cap outliers.                            |
+| `CAEC`, `CALC`                  | Ordinal Cat.| `ordinal_categorical_cleaner` with valid order; fill invalid/missing as mode/"no".         |
+| `MTRANS`                        | Nominal Cat.| Harmonize categories; use `handle_rare_categories` (`threshold=10`); harmonize test/train. |
+| `NObeyesdad`                    | Target      | Ensure no missing/invalid (train only); no cleaning in test.                               |
+| `BMI` (added)                   | Numerical   | Generated for diagnostics; not used for modeling unless in feature engineering.             |
+
+---
+
+**Note:**  
+- All filling, capping, and rare category thresholds should be based on train set statistics, applied identically to test to avoid leakage.
+- No feature engineering, dropping, or encoding at this stage; strictly cleaning and harmonization.
+- Report all records that are dropped or heavily modified for traceability.
+
+---
+
+**End of Data Cleaning Plan**  
+Please confirm if you need a more granular breakdown for any specific feature or step.

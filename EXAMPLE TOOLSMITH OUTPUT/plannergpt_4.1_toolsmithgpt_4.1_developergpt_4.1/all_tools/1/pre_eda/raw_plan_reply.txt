@@ -1,0 +1,127 @@
+Thank you for the detailed information. Here is the step-by-step plan for the **Preliminary Exploratory Data Analysis** phase, with clear objectives, actions, and methods for each feature group, respecting all your guidelines and constraints.
+
+---
+
+# Preliminary Exploratory Data Analysis Plan
+
+## Task 1: Summarize and Audit Feature Types and Missingness
+
+**Objective:**  
+Establish a foundational overview of all features in both train and test datasets, focusing on data types, unique values, and missing value patterns.
+
+**Actions:**
+- **For Numerical Features:** (`Age`, `Height`, `Weight`, `FCVC`, `NCP`, `CH2O`, `FAF`, `TUE`)
+    - Use `summarize_numerical_features` to print mean, std, min, 25th/50th/75th percentiles, max, and missing count for each feature.
+    - Output: Text table for both train and test datasets; description before each output.
+- **For Categorical Features:** (`Gender`, `family_history_with_overweight`, `FAVC`, `CAEC`, `SMOKE`, `SCC`, `CALC`, `MTRANS`, and target `NObeyesdad` [train only])
+    - Use `summarize_categorical_features` to print unique classes, most common value/frequency, and missing count.
+    - Output: Text table for both train and test; description before each output.
+- **For ID column:**  
+    - Check for uniqueness and missing values using pandas `.is_unique` and `.isnull().sum()`.
+    - Output: Text summary on ID quality for both train and test.
+
+**Constraints:**  
+- No modification of data at this stage.
+- Use only print/text outputs for summaries.
+
+---
+
+## Task 2: Initial Distribution Analysis of Features
+
+**Objective:**  
+Understand raw distributions and spot potential data entry errors or outliers.
+
+**Actions:**
+- **Numerical Features (all listed above):**
+    - Use `plot_numerical_distributions` on train data (and test data if computationally feasible) to visualize histograms.
+        - Parameters: No target hue for first pass; set `n_cols=3`, `figsize=(16, 8)`.
+    - Output: Up to 8 plots (1 per feature, grouped to minimize figure count); description before each plot.
+- **Categorical Features:**
+    - Use `plot_categorical_counts` for all categorical features (excluding target for initial pass).
+    - Parameters: `n_cols=3`, `figsize=(16, 8)`.
+    - Output: Up to 8 plots (depending on grouping); description before each plot.
+
+**Constraints:**  
+- Limit total number of generated images to 10.
+- Use only essential plots (histograms, countplots) for initial visual checks.
+
+---
+
+## Task 3: Outlier and Consistency Detection
+
+**Objective:**  
+Detect and quantify potential anomalies or data entry errors in numerical features.
+
+**Actions:**
+- **Numerical Features:** (`Age`, `Height`, `Weight`, `FCVC`, `NCP`, `CH2O`, `FAF`, `TUE`)
+    - Apply `automated_outlier_detector` (method=`iqr`, threshold=1.5).
+    - Output: Table listing feature, outlier count/ratio, method, and threshold; text description before output.
+- **BMI Consistency Check:**
+    - Use `bmi_feature_analysis` to compute BMI (`Weight`/`Height`^2) for each individual.
+    - Output: Print BMI summary statistics (mean, std, min, max, quartiles); description before output.
+    - Flag any extreme or implausible BMI values (e.g., BMI < 10 or > 60) in text report.
+
+**Constraints:**  
+- No data correction or exclusion at this stage.
+- Focus on text outputs for outlier tables and BMI summary.
+
+---
+
+## Task 4: Target Variable and Class Distribution (Train Data Only)
+
+**Objective:**  
+Assess the balance and nature of the target variable and its relationship with key features.
+
+**Actions:**
+- **Target Variable (`NObeyesdad`):**
+    - Use `analyze_target_distribution` to print class counts and proportions.
+    - Output: Table and description of class balance.
+- **Key Feature vs Target Diagnostics (Preliminary):**
+    - For `Age`, `Weight`, `Height`, and computed `BMI`: use `feature_vs_target_boxplot` to visualize how these separate by obesity class (limit to 4 plots).
+    - For `Gender`, print crosstab of `Gender` vs `NObeyesdad` using pandas.
+    - Output: Description before each boxplot/table.
+    - If image quota is reached from previous tasks, prioritize boxplots for BMI and Weight vs. target.
+
+**Constraints:**  
+- No more than 10 total images for the phase.
+- Do not perform deep feature-target association or multivariate analysis at this stage.
+
+---
+
+# Feature-Specific Plan Summary
+
+| Feature   | Task 1 (Summary) | Task 2 (Distribution) | Task 3 (Outliers/BMI) | Task 4 (Target Rel.) |
+|-----------|------------------|----------------------|-----------------------|----------------------|
+| id        | uniqueness/miss  | -                    | -                     | -                    |
+| Gender    | summary          | countplot            | -                     | crosstab             |
+| Age       | summary          | histogram            | outlier               | boxplot              |
+| Height    | summary          | histogram            | outlier               | boxplot              |
+| Weight    | summary          | histogram            | outlier               | boxplot              |
+| family... | summary          | countplot            | -                     | (later)              |
+| FAVC      | summary          | countplot            | -                     | (later)              |
+| FCVC      | summary          | histogram            | outlier               | (later)              |
+| NCP       | summary          | histogram            | outlier               | (later)              |
+| CAEC      | summary          | countplot            | -                     | (later)              |
+| SMOKE     | summary          | countplot            | -                     | (later)              |
+| CH2O      | summary          | histogram            | outlier               | (later)              |
+| SCC       | summary          | countplot            | -                     | (later)              |
+| FAF       | summary          | histogram            | outlier               | (later)              |
+| TUE       | summary          | histogram            | outlier               | (later)              |
+| CALC      | summary          | countplot            | -                     | (later)              |
+| MTRANS    | summary          | countplot            | -                     | (later)              |
+| NObeyesdad| summary (train)  | countplot (train)    | -                     | analyze/crosstab     |
+| BMI (comp)| -                | (see Weight/Height)  | summary/outlier       | boxplot              |
+
+---
+
+## Final Notes
+
+- Do NOT perform any cleaning, imputation, or encoding in this phase.
+- Keep all analysis descriptive and non-intrusive.
+- Print a description before every statistics table or plot.
+- Limit images to those providing the most critical insight (max 10).
+- Flag any potential issues for cleaning, but do not attempt to fix them here.
+
+---
+
+**Ready to execute this plan once you confirm!**

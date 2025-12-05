@@ -12,9 +12,11 @@ from agents import Reader, Planner, Developer, Reviewer, Summarizer, Toolsmith
 from state import State
 
 class SOP:
-    def __init__(self, competition: str, model: str):
+    def __init__(self, competition: str, model_planner: str, model_toolsmith: str, model_developer: str):
         self.competition = competition
-        self.model = model.replace("_", "-")
+        self.model_planner = model_planner.replace("_", "-")
+        self.model_toolsmith = model_toolsmith.replace("_", "-")
+        self.model_developer = model_developer.replace("_", "-")
         self.state_records = []
         self.current_state = None
         self.config = self._load_configuration()
@@ -31,11 +33,11 @@ class SOP:
         if agent_name == "Reader":
             agent = Reader('gpt-4o-mini', 'api')
         elif agent_name == "Toolsmith":
-            agent = Toolsmith('gpt-4o', 'api')
+            agent = Toolsmith(self.model_toolsmith, 'api')
         elif agent_name == "Planner":
-            agent = Planner(self.model, 'api')
+            agent = Planner(self.model_planner, 'api')
         elif agent_name == "Developer":
-            agent = Developer('gpt-4o', 'api')
+            agent = Developer(self.model_developer, 'api')
         elif agent_name == "Reviewer":
             agent = Reviewer('gpt-4o-mini', 'api')
         elif agent_name == "Summarizer":
@@ -58,6 +60,12 @@ class SOP:
             
             action_result = current_agent.action(state)
             state.update_memory(action_result)
+
+            # NEW: Refresh tools right after Toolsmith runs
+            if current_agent_name == "Toolsmith":
+                # Toolsmith has updated generated code + markdown + config
+                state.reload_tools_after_toolsmith()
+
             state.next_step()
 
             if state.check_finished():

@@ -1,0 +1,25 @@
+To determine which images are most relevant for the Preliminary Exploratory Data Analysis phase, we should consider images that provide insights into the relationships between variables, distributions of numerical and categorical data, and any initial patterns or trends that could inform further analysis.
+
+1. **bmi_vs_target_train.png**: This image likely shows the relationship between BMI and the target variable, which is important for understanding how BMI relates to obesity risks.
+
+2. **bmi_vs_target_boxplot.png**: This boxplot would provide a visual summary of the distribution of BMI across different target categories, which is useful for identifying outliers and the central tendency.
+
+3. **categorical_counts_train.png**: This image would give insights into the distribution of categorical variables, which is essential for understanding the composition of the dataset.
+
+4. **weight_vs_target_boxplot.png**: Similar to the BMI boxplot, this image would help visualize the relationship between weight and the target variable, allowing for the identification of patterns or disparities.
+
+5. **numerical_distributions_train.png**: This image likely provides histograms or density plots for numerical variables, helping to understand their distributions which is crucial for subsequent analysis.
+
+Based on this reasoning, the selected images are:
+
+```json
+{
+    "images": [
+        "bmi_vs_target_train.png",
+        "bmi_vs_target_boxplot.png",
+        "categorical_counts_train.png",
+        "weight_vs_target_boxplot.png",
+        "numerical_distributions_train.png"
+    ]
+}
+```

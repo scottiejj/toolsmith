@@ -1,0 +1,100 @@
+Final modeling feature columns:
+Age: float64
+Height: float64
+Weight: float64
+FCVC: float64
+NCP: float64
+CH2O: float64
+FAF: float64
+TUE: float64
+BMI: float64
+lifestyle_risk_score: float64
+age_lifestyle_interaction: float64
+bmi_weight_interaction: float64
+lifestyle_balance: float64
+Age_std: float64
+Height_std: float64
+Weight_std: float64
+FCVC_std: float64
+NCP_std: float64
+CH2O_std: float64
+FAF_std: float64
+TUE_std: float64
+BMI_std: float64
+lifestyle_risk_score_std: float64
+age_lifestyle_interaction_std: float64
+bmi_weight_interaction_std: float64
+lifestyle_balance_std: float64
+Gender_Female: bool
+Gender_Male: bool
+family_history_with_overweight_no: bool
+family_history_with_overweight_yes: bool
+FAVC_no: bool
+FAVC_yes: bool
+CAEC_Always: bool
+CAEC_Frequently: bool
+CAEC_No: bool
+CAEC_Sometimes: bool
+SMOKE_no: bool
+SMOKE_yes: bool
+SCC_no: bool
+SCC_yes: bool
+CALC_Frequently: bool
+CALC_No: bool
+CALC_Sometimes: bool
+MTRANS_Automobile: bool
+MTRANS_Bike: bool
+MTRANS_Motorbike: bool
+MTRANS_Public_transportation: bool
+MTRANS_Walking: bool
+BMI_category_Underweight: bool
+BMI_category_Normal_weight: bool
+BMI_category_Overweight: bool
+BMI_category_Obesity_I: bool
+BMI_category_Obesity_II: bool
+BMI_category_Obesity_III: bool
+n_flags: int64
+
+X_train shape: (20758, 55), X_test shape: (13840, 55), y_train shape: (20758,)
+Unique target classes: ['Insufficient_Weight', 'Normal_Weight', 'Obesity_Type_I', 'Obesity_Type_II', 'Obesity_Type_III', 'Overweight_Level_I', 'Overweight_Level_II']
+
+Cross-Validation Results Summary:
+                    Model CV Accuracy (mean)  ... # Features  # Samples
+0      LogisticRegression    0.8626 ± 0.0039  ...         55      20758
+1  RandomForestClassifier    0.8963 ± 0.0041  ...         55      20758
+2                     SVC    0.6953 ± 0.0020  ...         55      20758
+
+[3 rows x 5 columns]
+
+Selected model for final prediction: RandomForestClassifier (Accuracy: 0.8963)
+
+Test set prediction class distribution:
+Insufficient_Weight    1730
+Normal_Weight          2096
+Obesity_Type_I         2053
+Obesity_Type_II        2131
+Obesity_Type_III       2623
+Overweight_Level_I     1469
+Overweight_Level_II    1738
+Name: count, dtype: int64
+
+Submission file preview:
+      id          NObeyesdad
+0  20758     Obesity_Type_II
+1  20759  Overweight_Level_I
+2  20760    Obesity_Type_III
+3  20761      Obesity_Type_I
+4  20762    Obesity_Type_III
+
+Submission class value counts:
+NObeyesdad
+Obesity_Type_III       2623
+Obesity_Type_II        2131
+Normal_Weight          2096
+Obesity_Type_I         2053
+Overweight_Level_II    1738
+Insufficient_Weight    1730
+Overweight_Level_I     1469
+Name: count, dtype: int64
+
+Submission file saved to: /Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/submission.csv

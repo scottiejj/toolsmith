@@ -1,0 +1,18 @@
+## QUESTIONS
+### Question 1
+What files did you process? Which files were generated? Answer with detailed file path.
+
+### Question 2
+Which features were involved in this phase? What changes did they undergo? If any feature types were modified, answer which features are modified and how they are modified. If any features were deleted or created, answer which features are deleted or created and provide detailed explanations. (This is a FIXED question for each phase.)
+
+### Question 3
+What specific data cleaning steps were executed on each feature, and what were the outcomes?
+
+### Question 4
+Which features had missing values before cleaning, and how were they addressed? Please provide the methods used for imputation and the final state of these features.
+
+### Question 5
+What outliers were identified in the dataset, and what strategies were implemented to handle them?
+
+### Question 6
+What key insights or patterns emerged from the data cleaning phase that should be prioritized in the In-depth Exploratory Data Analysis?

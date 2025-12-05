@@ -1,0 +1,80 @@
+# SUMMARY OF FEATURE ENGINEERING PHASE
+
+### Question 1
+**What new features were created during the Feature Engineering phase, and what insights or analyses led to their creation?**
+
+New features created during this phase include:
+- **BMI_category**: Categorizes individuals based on their BMI using standard WHO thresholds.
+- **lifestyle_risk_score**: A composite score based on dietary and lifestyle factors like FAVC, CAEC, CALC, SCC, SMOKE, FCVC, CH2O, FAF, and TUE, indicating overall lifestyle risk.
+- **age_lifestyle_interaction**: An interaction term between Age and lifestyle factors (FAVC, FCVC, FAF), which may show how age affects lifestyle impacts on health.
+- **bmi_weight_interaction**: An interaction between BMI and Weight to assess their combined influence on obesity risk.
+- **lifestyle_balance**: A balance score derived from physical activity (FAF) and technology use (TUE) to evaluate lifestyle habits.
+
+These features were developed to provide deeper insights into the relationships between lifestyle choices, age, and their impacts on obesity, as derived from the findings in the in-depth exploratory data analysis (EDA).
+
+### Question 2
+**How were the categorical variables transformed, and what encoding techniques were applied?**
+
+Categorical variables were transformed using one-hot encoding, which converts categorical values into binary columns. The following categorical columns were encoded:
+- **Gender**
+- **family_history_with_overweight**
+- **FAVC**
+- **CAEC**
+- **SMOKE**
+- **SCC**
+- **CALC**
+- **MTRANS**
+- **BMI_category**
+
+The original categorical columns were retained in the dataset by setting `drop_original=False`, allowing for both encoded and original versions to exist for potential model interpretation.
+
+### Question 3
+**What statistical transformations were applied to the numerical features, and how might these affect model performance?**
+
+Numerical features were standardized using z-score normalization, which transforms the data to have a mean of 0 and a standard deviation of 1. The features standardized include:
+- Age
+- Height
+- Weight
+- FCVC
+- NCP
+- CH2O
+- FAF
+- TUE
+- BMI
+- lifestyle_risk_score
+- age_lifestyle_interaction
+- bmi_weight_interaction
+- lifestyle_balance
+
+Standardization can improve model performance by ensuring that features are on the same scale, thereby enhancing the convergence speed of optimization algorithms and reducing bias in models sensitive to feature scaling.
+
+### Question 4
+**What feature selection criteria were used to determine which features to retain, and how many features are included in the final datasets?**
+
+Feature selection was performed manually based on the following criteria:
+- Exclusion of the `id` column as it does not contribute to model prediction.
+- Removal of duplicate or redundant features.
+- Exclusion of individual flag columns, retaining only the aggregated `n_flags` column.
+
+The final datasets included 58 features in the processed training set and 57 features in the processed test set.
+
+### Question 5
+**Were there any interactions or composite features created that could significantly influence the model's predictive power? If so, which features are they?**
+
+Yes, several interaction and composite features were created that could significantly influence the model's predictive power:
+- **age_lifestyle_interaction**: Captures how age interacts with lifestyle factors, potentially revealing age-related trends in obesity risk.
+- **bmi_weight_interaction**: Reflects the interaction between BMI and weight, which can be crucial in assessing obesity risk.
+- **lifestyle_risk_score**: Aggregates multiple lifestyle factors into a single metric, simplifying the interpretation of overall lifestyle risk.
+
+These features are expected to provide additional predictive power by capturing non-linear relationships and interactions that are often pivotal in health-related models.
+
+### Question 6
+**What potential challenges or considerations should be kept in mind when transitioning to the Model Building phase, based on the feature engineering outcomes?**
+
+When transitioning to the Model Building phase, consider the following challenges:
+- **Overfitting**: The introduction of numerous interaction and composite features may lead to overfitting, especially with models that are sensitive to feature complexity.
+- **Feature Importance**: It will be essential to evaluate the importance of newly created features, as some may not contribute significantly to model performance and could be candidates for exclusion.
+- **Multicollinearity**: The creation of interaction terms may introduce multicollinearity, which could affect the stability and interpretability of certain models.
+- **Normalization Impact**: Ensure that all models used can effectively leverage the standardized features, as some algorithms may require adaptations.
+
+These considerations will help in refining the modeling strategy to ensure robust and generalizable predictions.

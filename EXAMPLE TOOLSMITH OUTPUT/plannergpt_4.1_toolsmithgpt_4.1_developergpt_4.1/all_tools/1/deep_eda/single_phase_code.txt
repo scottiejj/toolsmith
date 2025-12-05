@@ -1,0 +1,138 @@
+
+import os
+import pandas as pd
+
+# Constants
+data_dir = '/Users/scottiejj/Desktop/AutoKaggle_APAPTED/multi_agents/competition/obesity_risks/'
+train_path = os.path.join(data_dir, 'cleaned_train.csv')
+eda_img_dir = os.path.join(data_dir, 'deep_eda/images')
+os.makedirs(eda_img_dir, exist_ok=True)
+
+# Load cleaned training data (work on a copy)
+train = pd.read_csv(train_path)
+df = train.copy()
+
+# Feature lists (excluding outlier flags and 'id')
+numerical_features = [
+    'Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE', 'BMI'
+]
+categorical_features = [
+    'Gender', 'family_history_with_overweight', 'FAVC', 'CAEC', 'SMOKE', 'SCC', 'CALC', 'MTRANS'
+]
+target_col = 'NObeyesdad'
+
+# --- Numerical feature summary by target ---
+print("Numerical feature summary stratified by obesity class:")
+num_summary = target_stratified_numerical_summary(
+    df=df,
+    numerical_cols=numerical_features,
+    target_col=target_col
+)
+print(num_summary)
+
+# --- ANOVA/Kruskal-Wallis significance testing ---
+print("\nANOVA/Kruskal-Wallis test results for numerical features vs. target:")
+anova_results = target_vs_feature_anova(
+    df=df,
+    numerical_cols=numerical_features,
+    target_col=target_col
+)
+print(anova_results)
+
+# --- Categorical feature summary ---
+print("\nCategorical feature summary:")
+cat_summary = summarize_categorical_features(
+    df=df,
+    categorical_cols=categorical_features
+)
+print(cat_summary)
+
+# --- Chi2 association for categorical features vs. target ---
+print("\nChi2 association between categorical features and target:")
+chi2_results = categorical_vs_target_chi2(
+    df=df,
+    cat_cols=categorical_features,
+    target_col=target_col
+)
+print(chi2_results)
+
+
+# --- BMI segmentation by obesity class (excluding BMI outliers) ---
+print("\nBMI statistics by obesity class (excluding BMI outliers):")
+bmi_segment = segment_bmi_by_obesity_class(
+    df=df,
+    bmi_col='BMI',
+    target_col=target_col,
+    outlier_flag_col='BMI_flag'
+)
+print(bmi_segment)
+
+# --- Lifestyle subgroup analysis ---
+lifestyle_cols = ['FAVC', 'SMOKE', 'SCC', 'MTRANS', 'CAEC']
+for col in lifestyle_cols:
+    print(f"\nObesity class prevalence by {col}:")
+    seg = lifestyle_segment_obesity_rate(
+        df=df,
+        segment_col=col,
+        target_col=target_col,
+        min_count=10
+    )
+    print(seg)
+
+
+import matplotlib.pyplot as plt
+
+# --- Correlation heatmap among numerical features ---
+print("\nGenerating correlation heatmap for numerical features...")
+heatmap_fig = feature_interaction_heatmap(
+    df=df,
+    numerical_cols=numerical_features,
+    method='pearson',
+    figsize=(10, 8)
+)
+heatmap_path = os.path.join(eda_img_dir, 'correlation_heatmap_numerical_features.png')
+heatmap_fig.savefig(heatmap_path)
+plt.close(heatmap_fig)
+print(f"Correlation heatmap saved to: {heatmap_path}")
+
+# Optional: Interpretation (text-based)
+corr_matrix = df[numerical_features].corr(method='pearson')
+# Find strongest positive and negative correlations
+corr_pairs = corr_matrix.abs().unstack().sort_values(ascending=False)
+# Exclude self-correlations
+corr_pairs = corr_pairs[corr_pairs < 1]
+# Drop duplicate pairs
+corr_pairs = corr_pairs[~corr_pairs.index.duplicated(keep='first')]
+print("\nStrongest absolute correlations among numerical features:")
+print(corr_pairs.head(5))
+
+
+import matplotlib.pyplot as plt
+
+# --- Boxplots for strongest numerical features (by ANOVA p-value) ---
+signif_num = anova_results.sort_values('p_value').query('significant').head(3)['feature'].tolist()
+for feat in signif_num:
+    print(f"\nBoxplot for {feat} stratified by obesity class:")
+    fig = feature_vs_target_boxplot(df=df, numerical_col=feat, target_col=target_col, figsize=(8, 5))
+    plot_path = os.path.join(eda_img_dir, f'boxplot_{feat}_vs_obesity_class.png')
+    fig.savefig(plot_path)
+    plt.close(fig)
+    print(f"Boxplot saved to: {plot_path}")
+
+# --- Optional: Categorical countplot for strongest chi2 feature, if highly significant ---
+# Only do this if fewer than 4 plots have been generated so far
+num_plots = 1 + len(signif_num)  # heatmap + boxplots
+top_cat = chi2_results.sort_values('p_value').query('significant').head(1)
+if not top_cat.empty and num_plots < 4:
+    top_cat_feat = top_cat.iloc[0]['feature']
+    print(f"\nGenerating countplot for {top_cat_feat} vs. obesity class (top chi2 association)...")
+    # We'll use plot_categorical_counts for a single feature, grouped by target
+    # But as the tool only plots counts, we use pandas + seaborn here for grouped barplot (allowed for visualization)
+    import seaborn as sns
+    fig, ax = plt.subplots(figsize=(8, 5))
+    sns.countplot(data=df, x=top_cat_feat, hue=target_col, ax=ax)
+    ax.set_title(f"{top_cat_feat} count by Obesity Class")
+    plot_path = os.path.join(eda_img_dir, f'countplot_{top_cat_feat}_by_obesity_class.png')
+    fig.savefig(plot_path)
+    plt.close(fig)
+    print(f"Countplot saved to: {plot_path}")

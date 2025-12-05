@@ -1,0 +1,126 @@
+Thank you for the detailed context, previous reports, and tool list. Here is a feature-specific plan for the **In-depth Exploratory Data Analysis** phase, strictly following your guidelines and resource constraints.
+
+---
+
+# In-depth Exploratory Data Analysis Plan
+
+**Objectives:**  
+- Conduct advanced statistical and relational analysis for all features and their connection to the target (`NObeyesdad`)
+- Examine feature interactions and multicollinearity
+- Visualize key insights where text is insufficient
+- Generate actionable recommendations for feature engineering
+
+## Task 1: Advanced Univariate and Bivariate Analysis by Feature Type
+
+**Objective:**  
+Go beyond basic stats to deeply analyze each feature’s relationship with `NObeyesdad` and check for distributional patterns or group differences.
+
+**Actions:**  
+1. **Numerical Features** (`Age`, `Height`, `Weight`, `FCVC`, `NCP`, `CH2O`, `FAF`, `TUE`, `BMI`):
+    - **Textual summaries stratified by target:**  
+      - Use `target_stratified_numerical_summary` to print group-wise statistics for each feature.
+    - **Statistical tests:**  
+      - Use `target_vs_feature_anova` for each feature to assess if means/medians differ significantly across obesity classes.  
+      - Print results, highlight features with significant differences (p < 0.05).
+
+2. **Categorical Features** (`Gender`, `family_history_with_overweight`, `FAVC`, `CAEC`, `SMOKE`, `SCC`, `CALC`, `MTRANS`):
+    - **Textual summaries:**  
+      - Use `summarize_categorical_features` for overview.
+    - **Association tests:**  
+      - Use `categorical_vs_target_chi2` for each categorical feature vs. target; print chi2/p-values, flag those with significant association.
+
+**Constraints:**  
+- No data modification.
+- Output must be text unless distribution patterns are not clear.
+
+---
+
+## Task 2: Obesity Class Segmentation & Lifestyle Subgroup Analysis
+
+**Objective:**  
+Dissect how BMI and obesity prevalence distribute within lifestyle/demographic segments, and examine class separability and high-risk subgroups.
+
+**Actions:**  
+1. **BMI by Obesity Class:**  
+   - Use `segment_bmi_by_obesity_class` (exclude outliers using `BMI_flag`) to print summary statistics of BMI for each class.
+   - Highlight overlap, gaps, or mislabeling in BMI ranges.
+
+2. **Lifestyle Feature Segmentation:**  
+   - For each of `FAVC`, `SMOKE`, `SCC`, `MTRANS`, and `CAEC`, use `lifestyle_segment_obesity_rate` to create and print obesity prevalence tables by subgroup.
+   - Highlight subgroups with unusually high rates of specific obesity classes.
+
+**Constraints:**  
+- Output segment summaries as text tables.
+- Only generate a visualization if subgroup differences are dramatic and not textually obvious.
+
+---
+
+## Task 3: Feature Interaction and Multicollinearity Assessment
+
+**Objective:**  
+Identify collinear, redundant, or highly correlated features, and uncover meaningful feature interactions that may inform feature engineering.
+
+**Actions:**  
+1. **Correlation Heatmap:**  
+   - Use `feature_interaction_heatmap` for all numerical features (including `BMI` but excluding outlier flags), method=`pearson`, `figsize=(10, 8)`.
+   - Print a brief description before the heatmap, and interpret the most significant correlations.
+
+2. **Interaction Patterns:**  
+   - Based on heatmap and previous summaries, describe any strong linear relationships (e.g., `Weight` vs. `BMI`, `FCVC` vs. `FAVC`).
+   - Note potential candidates for feature engineering (e.g., ratios, differences, or interaction terms).
+
+**Constraints:**  
+- Limit to one heatmap image for efficiency.
+- All other outputs should be in text.
+
+---
+
+## Task 4: Key Visualization of Feature-Target Patterns
+
+**Objective:**  
+Visualize only the most critical, non-obvious relationships between features and the target to supplement text-based findings.
+
+**Actions:**  
+1. **Boxplots for Discriminative Numerical Features:**
+   - Select up to three numerical features with the strongest ANOVA test results (lowest p-values).
+   - For each, use `feature_vs_target_boxplot` (max 3 plots).
+   - Before each plot, print a description of why this feature was chosen.
+
+2. **Countplots for Categorical Features (Optional):**
+   - If any categorical feature has a highly unusual association with `NObeyesdad` (based on chi2), show a countplot of its distribution colored by target.
+
+**Constraints:**  
+- No more than four images total, including the heatmap above.
+- Describe plots and their interpretation in text before/after each plot.
+
+---
+
+# Additional Instructions and Recommendations
+
+- **For each step**, clearly list which features are being analyzed, and explain the rationale for prioritizing them.
+- **Do not create or modify features**—only analyze and report.
+- **Document all findings** in text summaries, especially actionable insights (e.g., “BMI and Weight are highly collinear; consider removing one or creating an interaction term in feature engineering”).
+
+---
+
+## Summary Table: Tools and Features by Task
+
+| Task | Features Involved | Primary Tools/Methods            | Output Type          |
+|------|-------------------|-----------------------------------|----------------------|
+| 1    | All (by type)     | `target_stratified_numerical_summary`, `target_vs_feature_anova`, `summarize_categorical_features`, `categorical_vs_target_chi2` | Text                |
+| 2    | BMI, Lifestyle    | `segment_bmi_by_obesity_class`, `lifestyle_segment_obesity_rate` | Text (Image if needed) |
+| 3    | Numerical         | `feature_interaction_heatmap`     | 1 Heatmap + Text     |
+| 4    | Top features      | `feature_vs_target_boxplot` (+ optional countplot) | ≤3 Boxplots, ≤1 Countplot, Text |
+
+---
+
+## Final Output
+
+You will deliver:
+- Rich, feature-specific statistical/textual summaries
+- Up to 4 key images (with text explanations)
+- Actionable, feature-specific insights and recommendations for feature engineering
+
+---
+
+**Ready for developer execution.** If you have a sample of the cleaned data, I can further tailor example outputs or field-specific rationales.

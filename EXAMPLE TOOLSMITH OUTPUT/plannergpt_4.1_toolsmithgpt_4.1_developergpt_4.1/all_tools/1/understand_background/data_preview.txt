@@ -1,0 +1,54 @@
+# Data Information
+
+## Data Type
+### ID type
+- `id`: Unique identifier for each data point.
+
+### Numerical type
+- `Age`: Age of the individuals.
+- `Height`: Height of the individuals (in meters).
+- `Weight`: Weight of the individuals (in kilograms).
+- `CH2O`: Daily water intake (in liters).
+- `FAF`: Frequency of physical activity.
+- `TUE`: Time spent on exercise (in hours).
+- `CALC`: Daily calcium intake (in grams).
+
+### Categorical type
+- `Gender`: Gender of the individuals (Male/Female).
+- `family_history_with_overweight`: Indicates if there is a family history of overweight (yes/no).
+- `FAVC`: Food intake frequency (yes/no).
+- `FCVC`: Frequency of consumption of vegetables (numerical scale).
+- `NCP`: Number of meals consumed per day (numerical scale).
+- `CAEC`: Consumption of food between meals (categorical).
+- `SMOKE`: Smoking status (yes/no).
+- `SCC`: Self-calculated calories (yes/no).
+- `MTRANS`: Means of transportation (categorical).
+- `NObeyesdad`: Level of obesity (target variable; categorical).
+
+### Datetime type
+- None.
+
+## Detailed data description
+The dataset consists of two segments: training data and test data. The training data includes features related to individuals' demographic and lifestyle information, such as age, gender, height, weight, dietary habits, and physical activity levels. The target variable, `NObeyesdad`, classifies individuals into categories based on their obesity levels, ranging from "Insufficient Weight" to "Obesity Type III." 
+
+Notable patterns observed in the training data include:
+- A variety of age groups, primarily between 18 and 32 years.
+- Height and weight distributions vary significantly among individuals, indicating different body compositions.
+- Many individuals report a family history of overweight issues.
+- The majority of respondents engage in some form of physical activity, but the frequency varies.
+- Transportation modes predominantly include Public Transportation and Automobile.
+
+## Target Variable
+- `NObeyesdad`: This is the target variable representing the obesity classification of individuals. The categories include:
+  - "Insufficient Weight"
+  - "Normal Weight"
+  - "Overweight Level I"
+  - "Overweight Level II"
+  - "Obesity Type I"
+  - "Obesity Type II"
+  - "Obesity Type III"
+
+# Submission format (if applicable)
+The submission file should contain the following columns:
+- `id`: Unique identifier for each data point (integer).
+- `NObeyesdad`: Predicted obesity classification (categorical).

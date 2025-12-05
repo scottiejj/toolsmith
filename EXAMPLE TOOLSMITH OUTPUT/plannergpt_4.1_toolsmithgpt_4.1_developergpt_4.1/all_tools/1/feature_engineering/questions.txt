@@ -1,0 +1,18 @@
+## QUESTIONS
+### Question 1
+What new features were created during the Feature Engineering phase, and what insights or analyses led to their creation?
+
+### Question 2
+How were the categorical variables transformed, and what encoding techniques were applied?
+
+### Question 3
+What statistical transformations were applied to the numerical features, and how might these affect model performance?
+
+### Question 4
+What feature selection criteria were used to determine which features to retain, and how many features are included in the final datasets?
+
+### Question 5
+Were there any interactions or composite features created that could significantly influence the model's predictive power? If so, which features are they?
+
+### Question 6
+What potential challenges or considerations should be kept in mind when transitioning to the Model Building phase, based on the feature engineering outcomes?

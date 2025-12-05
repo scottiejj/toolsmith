@@ -1,0 +1,18 @@
+## QUESTIONS
+### Question 1
+What models were trained during this phase, and what were their respective cross-validated performance metrics (mean accuracy and macro-F1 score)?
+
+### Question 2
+Which features were included in the final model training, and were there any notable observations regarding their significance or contribution to the model performance?
+
+### Question 3
+How did you ensure consistency between the training and test datasets in terms of feature selection and encoding? Were there any challenges encountered?
+
+### Question 4
+What approach was taken for final model selection, and what were the criteria for choosing the final model for prediction?
+
+### Question 5
+What is the predicted class distribution of the `NObeyesdad` variable in the test set, and how does it compare with the expected distribution based on the training data?
+
+### Question 6
+What were the key lessons learned during the Model Building, Validation, and Prediction phase that could inform future modeling efforts or competition strategies?

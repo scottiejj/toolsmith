@@ -1,0 +1,65 @@
+[
+    {
+        "task": "Advanced Univariate and Bivariate Analysis by Feature Type",
+        "tools, involved features and correct parameters": [
+            "Numerical Features (Age, Height, Weight, FCVC, NCP, CH2O, FAF, TUE, BMI): target_stratified_numerical_summary (group-wise stats by obesity class)",
+            "Numerical Features: target_vs_feature_anova (test for significant differences across classes)",
+            "Categorical Features (Gender, family_history_with_overweight, FAVC, CAEC, SMOKE, SCC, CALC, MTRANS): summarize_categorical_features (overview)",
+            "Categorical Features: categorical_vs_target_chi2 (association test with target)"
+        ],
+        "expected output or impact on data": [
+            "Text-based summary tables showing statistics for each feature stratified by target",
+            "Textual results of ANOVA and Chi-squared tests, highlighting significant feature-target associations",
+            "No changes to data"
+        ],
+        "constraints": [
+            "No data modification",
+            "Output is text unless patterns are not clear from text alone"
+        ]
+    },
+    {
+        "task": "Obesity Class Segmentation & Lifestyle Subgroup Analysis",
+        "tools, involved features and correct parameters": [
+            "segment_bmi_by_obesity_class (BMI stats segmented by obesity class, excluding outliers using BMI_flag)",
+            "lifestyle_segment_obesity_rate (obesity prevalence tables for each of: FAVC, SMOKE, SCC, MTRANS, CAEC)"
+        ],
+        "expected output or impact on data": [
+            "Text tables summarizing BMI by obesity class and obesity rates within lifestyle subgroups",
+            "Highlights of class overlap, labeling issues, and high-risk subgroups"
+        ],
+        "constraints": [
+            "Results as text tables",
+            "Only generate a visualization if subgroup differences are dramatic and not clear in text"
+        ]
+    },
+    {
+        "task": "Feature Interaction and Multicollinearity Assessment",
+        "tools, involved features and correct parameters": [
+            "feature_interaction_heatmap (all numerical features including BMI, excluding outlier flags, method='pearson', figsize=(10, 8))"
+        ],
+        "expected output or impact on data": [
+            "One heatmap visualizing numerical feature correlations",
+            "Text interpretation of strongest correlations and implications for redundancy or feature engineering"
+        ],
+        "constraints": [
+            "Limit to one image (the heatmap)",
+            "All other outputs in text"
+        ]
+    },
+    {
+        "task": "Key Visualization of Feature-Target Patterns",
+        "tools, involved features and correct parameters": [
+            "For up to three numerical features with strongest ANOVA results, use feature_vs_target_boxplot (figsize=(8, 5))",
+            "If a categorical feature shows a strong chi2 association, optionally use a countplot colored by target"
+        ],
+        "expected output or impact on data": [
+            "Up to three boxplots (numerical feature vs. target) and one countplot (categorical feature by target), each with descriptive text",
+            "Visual confirmation and illustration of non-obvious or strongly discriminative patterns"
+        ],
+        "constraints": [
+            "Maximum of four images including heatmap from Step 3",
+            "Each plot must be justified by prior statistical findings",
+            "All plots accompanied by text descriptions and interpretations"
+        ]
+    }
+]

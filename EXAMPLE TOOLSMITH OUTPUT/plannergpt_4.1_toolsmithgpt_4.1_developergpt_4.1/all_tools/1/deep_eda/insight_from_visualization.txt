@@ -1,0 +1,180 @@
+## IMAGE: boxplot_Age_vs_obesity_class.png ##
+The image is a box plot titled "Age by NObeyesdad," which seems to depict the distribution of age across different weight categories. The categories are:
+
+1. Insufficient_Weight
+2. Normal_Weight
+3. Obesity_Type_I
+4. Obesity_Type_II
+5. Obesity_Type_III
+6. Overweight_Level_I
+7. Overweight_Level_II
+
+### Detailed Description:
+
+- **Box Plot Components**: Each box plot shows the median (the line inside the box), the interquartile range (IQR, the box itself), and the whiskers, which typically represent 1.5 times the IQR. Points beyond the whiskers are considered outliers.
+
+- **Distribution**:
+  - **Insufficient_Weight**: The median age is around 20, with most ages ranging from about 18 to 22. There are a few outliers up to around 30.
+  - **Normal_Weight**: The median age is slightly higher, around 23, with ages ranging mostly between 20 and 28. There are numerous outliers extending to around 40.
+  - **Obesity_Type_I**: The median age is around 25, with ages primarily between 22 and 30. There are many outliers up to around 40.
+  - **Obesity_Type_II**: The median is around 28, with a more compact range from 25 to 32. Fewer outliers are present.
+  - **Obesity_Type_III**: The median is slightly lower, around 23, with a range from 20 to 27. There are very few outliers.
+  - **Overweight_Level_I**: The median is around 23, with ages ranging from 20 to 27. There are several outliers reaching up to around 40.
+  - **Overweight_Level_II**: The median age is higher, around 28, with a wider range from 21 to 35. Several outliers reach up to around 40.
+
+### Insights:
+
+1. **Age Trends**: In general, the median age tends to increase with higher obesity types and overweight levels, except for Obesity_Type_III, which shows a lower median age similar to Normal_Weight.
+
+2. **Outliers**: Categories like Normal_Weight and Obesity_Type_I have a high number of older outliers, suggesting that while the majority are younger, there are significant numbers of older individuals in these categories.
+
+3. **Age Range**: Overweight_Level_II shows the widest range of ages among the categories, indicating more diversity in age within this group.
+
+4. **Distribution Variability**: Obesity_Type_II and Overweight_Level_II show higher medians and relatively fewer outliers compared to other categories, suggesting a more concentrated age distribution.
+
+These insights can help in understanding the relationship between age and weight categories, possibly for targeting health interventions or understanding demographic distributions in these weight classes.
+## IMAGE: boxplot_Weight_vs_obesity_class.png ##
+The image is a box plot titled "Weight by NObeyesdad," displaying the distribution of weights across several categories. The categories on the x-axis are: "Insufficient_Weight," "Normal_Weight," "Obesity_Type_I," "Obesity_Type_II," "Obesity_Type_III," "Overweight_Level_I," and "Overweight_Level_II." The y-axis represents weight.
+
+### Detailed Description:
+
+1. **Insufficient_Weight**: 
+   - Median weight is the lowest among all categories.
+   - The interquartile range (IQR) is small, indicating low variability.
+   - Several outliers are present above the upper whisker.
+
+2. **Normal_Weight**: 
+   - Median weight is higher than "Insufficient_Weight" but lower than other categories.
+   - IQR is slightly larger than "Insufficient_Weight."
+   - There are a few outliers on both ends of the whiskers.
+
+3. **Obesity_Type_I**: 
+   - Median weight is significantly higher than the previous categories.
+   - IQR is large, suggesting more variability.
+   - There are outliers below the lower whisker.
+
+4. **Obesity_Type_II**: 
+   - Median weight increases from "Obesity_Type_I."
+   - IQR is smaller than "Obesity_Type_I," indicating less variability.
+   - Several outliers are present below the lower whisker.
+
+5. **Obesity_Type_III**: 
+   - Highest median weight among all categories.
+   - IQR is large, showing substantial variability.
+   - Some outliers are above the upper whisker.
+
+6. **Overweight_Level_I**: 
+   - Median weight is lower than the obesity types but higher than normal and insufficient weights.
+   - IQR is moderate.
+   - There are outliers, particularly below the lower whisker.
+
+7. **Overweight_Level_II**: 
+   - Median weight is slightly higher than "Overweight_Level_I."
+   - IQR is smaller, suggesting less variability.
+   - Outliers are primarily below the lower whisker.
+
+### Insights:
+
+- As expected, the median weight increases with higher obesity categories, with "Obesity_Type_III" having the highest median weight.
+- The variability in weight is greatest within the obesity categories, particularly "Obesity_Type_I" and "Obesity_Type_III."
+- There are consistent outliers across all categories, indicating individual variations in weight that don't conform to the general pattern.
+- The distinction in median weights between "Insufficient_Weight" and "Normal_Weight" is clear, reflecting the transition between underweight and normal weight classifications.
+- Understanding these distributions can help in targeting health interventions and understanding the weight distribution in different health categories.
+## IMAGE: boxplot_Height_vs_obesity_class.png ##
+The image is a box plot illustrating the distribution of height across different categories related to weight and obesity levels. Here's a detailed breakdown:
+
+### Categories on the X-axis:
+1. **Insufficient_Weight**
+2. **Normal_Weight**
+3. **Obesity_Type_I**
+4. **Obesity_Type_II**
+5. **Obesity_Type_III**
+6. **Overweight_Level_I**
+7. **Overweight_Level_II**
+
+### Y-axis:
+- Represents height, ranging from 1.50 to 1.90 meters.
+
+### Observations:
+
+- **Median Heights**:
+  - The median height is relatively consistent across most categories, with slight variations.
+  - **Obesity_Type_II** has the lowest median height.
+  - **Obesity_Type_I** and **Overweight_Level_I** have higher median heights.
+
+- **Interquartile Range (IQR)**:
+  - The IQR is widest for **Obesity_Type_I**, indicating more variability in height.
+  - **Obesity_Type_II** has the narrowest IQR.
+
+- **Outliers**:
+  - Significant outliers are present in **Obesity_Type_II** and **Overweight_Level_II**, indicated by dots outside the whiskers.
+
+- **Whiskers**:
+  - The whiskers extend similarly across categories, although **Obesity_Type_II** has a shorter range.
+
+### Insights:
+
+1. **Height and Weight Categories**:
+   - There is not a strong correlation between height and the different weight categories, as the median height remains relatively stable.
+   - **Obesity_Type_II** might be associated with shorter heights, given its lower median and more concentrated distribution.
+
+2. **Height Variability**:
+   - **Obesity_Type_I** shows more variability in height, suggesting diverse height ranges within this group.
+   - The presence of many outliers in **Obesity_Type_II** and **Overweight_Level_II** suggests that these groups have individuals significantly shorter or taller than the majority.
+
+3. **Potential Impacts**:
+   - The distribution patterns could inform health professionals about typical height ranges in relation to weight categories, potentially aiding in personalized health assessments.
+
+This analysis helps understand the relationship between height and weight classifications, providing a quick visual summary of height distributions across different weight categories.
+## IMAGE: correlation_heatmap_numerical_features.png ##
+The image is a Pearson correlation heatmap, which visually represents the relationships between different variables. The variables included are Age, Height, Weight, FCVC, NCP, CH2O, FAF, TUE, and BMI. The correlation values range from -1 to 1, where 1 indicates a perfect positive correlation, -1 indicates a perfect negative correlation, and 0 indicates no correlation.
+
+### Detailed Description:
+
+- **Diagonal**: All variables have a perfect correlation with themselves, indicated by the value 1.0 along the diagonal.
+  
+- **Age**: 
+  - Positively correlated with BMI (0.34).
+  - Negatively correlated with TUE (-0.30) and FAF (-0.20).
+
+- **Height**:
+  - Positively correlated with Weight (0.42).
+
+- **Weight**:
+  - Strong positive correlation with BMI (0.94).
+  - Moderate positive correlation with Height (0.42) and CH2O (0.32).
+
+- **FCVC** (Frequency of Consumption of Vegetables):
+  - Weak positive correlation with BMI (0.30).
+
+- **NCP** (Number of Main Meals):
+  - Weak positive correlation with Height (0.19).
+
+- **CH2O** (Consumption of Water):
+  - Weak positive correlation with Weight (0.32).
+
+- **FAF** (Physical Activity Frequency):
+  - Weak negative correlation with BMI (-0.21).
+
+- **TUE** (Time Using Technology):
+  - Negative correlation with Age (-0.30) and BMI (-0.12).
+
+- **BMI**:
+  - Strong positive correlation with Weight (0.94).
+  - Moderate positive correlation with Age (0.34) and CH2O (0.29).
+
+### Insights:
+
+1. **Weight and BMI**: There is a strong positive correlation between Weight and BMI, suggesting that as weight increases, BMI tends to increase proportionally.
+
+2. **Age and BMI**: A moderate positive correlation indicates that BMI tends to increase with age.
+
+3. **Height and Weight**: These variables are moderately correlated, implying that taller individuals tend to weigh more.
+
+4. **Physical Activity**: There is a slight negative correlation between physical activity (FAF) and BMI, suggesting more activity could be associated with lower BMI.
+
+5. **Technology Usage**: The negative correlation between technology usage (TUE) and both Age and BMI might imply that younger individuals spend more time using technology, which could slightly affect BMI.
+
+6. **Vegetable Consumption**: A weak positive correlation with BMI suggests that increasing vegetable consumption alone may not have a significant direct impact on BMI.
+
+This heatmap provides a quick overview of how these variables interact with each other, which can be useful for further analysis or hypothesis testing.

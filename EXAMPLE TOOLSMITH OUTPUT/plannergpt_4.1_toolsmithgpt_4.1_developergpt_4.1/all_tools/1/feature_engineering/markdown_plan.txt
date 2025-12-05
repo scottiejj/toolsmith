@@ -1,0 +1,44 @@
+## PLAN
+
+### STEP 1
+Task: Create and transform domain-specific composite features based on EDA findings and medical guidelines.
+Tools, involved features and correct parameters:
+- `create_bmi_category_feature`: Create `BMI_category` from `BMI` using standard WHO thresholds.
+- `create_lifestyle_risk_score`: Generate `lifestyle_risk_score` using `FAVC`, `CAEC`, `CALC`, `SCC`, `SMOKE`, `FCVC`, `CH2O`, `FAF`, `TUE`.
+- `create_age_lifestyle_interaction`: Generate `age_lifestyle_interaction` from `Age`, `FAVC`, `FCVC`, `FAF`.
+- `create_bmi_weight_interaction`: Generate `bmi_weight_interaction` from `BMI`, `Weight`.
+- `create_lifestyle_balance_feature`: Generate `lifestyle_balance` from `FAF`, `TUE`.
+Expected output or Impact on data:
+- Adds new columns: `BMI_category`, `lifestyle_risk_score`, `age_lifestyle_interaction`, `bmi_weight_interaction`, `lifestyle_balance` to both train and test sets.
+Constraints:
+- Apply identically to both train and test. Do not use the target variable in feature creation. Use default tool parameters unless otherwise specified.
+
+### STEP 2
+Task: Encode and transform categorical features for model readiness.
+Tools, involved features and correct parameters:
+- `one_hot_encode_columns`: Apply to all categorical features except `id` and the target (`Gender`, `family_history_with_overweight`, `FAVC`, `CAEC`, `SMOKE`, `SCC`, `CALC`, `MTRANS`, and engineered `BMI_category`), with `drop_original=False`.
+- Optionally, `target_mean_encoding`: For high-cardinality variables (e.g., `MTRANS`), fit on train and apply mapping to test, using ordinal encoding of `NObeyesdad` as required.
+Expected output or Impact on data:
+- Produces one-hot encoded columns for each category. Categorical features become usable for modeling.
+Constraints:
+- Ensure all categories in test are present in train, map unseen to "Rare" if needed. Do not remove original categorical columns unless explicitly required.
+
+### STEP 3
+Task: Standardize numerical and composite features, and aggregate outlier/flag columns.
+Tools, involved features and correct parameters:
+- `standardize_numerical_features`: Standardize raw (`Age`, `Height`, `Weight`, `FCVC`, `NCP`, `CH2O`, `FAF`, `TUE`, `BMI`) and engineered features (`lifestyle_risk_score`, `age_lifestyle_interaction`, `bmi_weight_interaction`, `lifestyle_balance`), with suffix `"_std"`.
+- `aggregate_flag_features`: Aggregate all boolean flag columns (ending with `_flag`) into a single count column `n_flags`.
+Expected output or Impact on data:
+- Standardized versions (z-score) of all selected features; new column `n_flags` summarizing anomaly flags.
+Constraints:
+- Compute standardization parameters on train, apply to test. Do not overwrite original features—retain both raw and standardized versions.
+
+### STEP 4
+Task: Perform feature selection and prepare final output files.
+Tools, involved features and correct parameters:
+- Manual selection: Exclude `id`, duplicate/redundant features, and all individual flag columns (retain only `n_flags`), and any columns used only for intermediate calculation.
+- Export: Save final features and `NObeyesdad` (train only) to `processed_train.csv` and `processed_test.csv`.
+Expected output or Impact on data:
+- Two files: `processed_train.csv` and `processed_test.csv`, containing only relevant and engineered features, ready for modeling.
+Constraints:
+- Do not remove features unless justified. Provide a clear list of included features for reproducibility.

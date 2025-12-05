@@ -1,0 +1,61 @@
+# Data Information
+
+## Data Type
+
+### ID type
+- `id`: Unique identifier for each data point (will NOT be used in model training).
+
+### Numerical type
+- `Age`: Age of the individual (float).
+- `Height`: Height of the individual (in meters, float).
+- `Weight`: Weight of the individual (in kilograms, float).
+- `FCVC`: Frequency of consumption of vegetables (float).
+- `NCP`: Number of main meals (float).
+- `CH2O`: Daily water intake (float).
+- `FAF`: Physical activity frequency (float).
+- `TUE`: Time using technology devices (float).
+
+### Categorical type
+- `Gender`: Gender of the individual (`Male`/`Female`).
+- `family_history_with_overweight`: Family history with overweight (`yes`/`no`).
+- `FAVC`: Frequent consumption of high caloric food (`yes`/`no`).
+- `CAEC`: Consumption of food between meals (`Sometimes`/`Frequently`/`Always`/`no`).
+- `SMOKE`: Smoking habit (`yes`/`no`).
+- `SCC`: Monitors calorie consumption (`yes`/`no`).
+- `CALC`: Consumption of alcohol (`Sometimes`/`Frequently`/`Always`/`no`).
+- `MTRANS`: Transportation used (`Automobile`/`Public_Transportation`/etc.).
+
+### Datetime type
+- None of the features are datetime values.
+
+## Detailed data description
+
+The dataset comprises demographic, lifestyle, and health-related information for individuals, with the aim of predicting obesity levels (`NObeyesdad`). Each record represents a unique person. The numerical features (such as age, height, weight) are continuous and likely important for BMI calculations. Several lifestyle and behavioral features are categorical, capturing habits related to food, exercise, and substance use.
+
+Notable patterns from the sample:
+- Both genders are present.
+- Age ranges from teens to early 30s in the sample.
+- Heights and weights vary, suggesting a mix of BMI categories.
+- Many features deal with frequency or presence of health-related habits (e.g., smoking, alcohol, fast food).
+- The `family_history_with_overweight`, `FAVC`, and similar features are mostly binary (`yes`/`no`).
+- Some features, like `CAEC` and `CALC`, have ordinal categorical values indicating frequency.
+- The target variable is multiclass with labels indicating different obesity levels.
+
+## Target Variable
+
+- **NObeyesdad**: Categorical variable indicating the obesity level of the individual. Sample values include:
+  - `Insufficient_Weight`
+  - `Normal_Weight`
+  - `Overweight_Level_I`
+  - `Overweight_Level_II`
+  - `Obesity_Type_I`
+  - `Obesity_Type_II`
+  - `Obesity_Type_III`
+
+## Submission format (if applicable)
+
+The submission file should include:
+- `id`: Unique identifier (integer).
+- `NObeyesdad`: Predicted obesity level (categorical string).
+
+Each row corresponds to an individual from the test set, with their predicted `NObeyesdad` value.
