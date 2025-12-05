@@ -9,9 +9,10 @@ This repository is an adaptation of the original AutoKaggle paper: "AutoKaggle: 
 
 ## Toolsmith Key Adaptations
 
-- **New agent**: `Toolsmith` — understands dataset background and phase context to design domain-specific tools and sklearn model wrappers with a uniform interface and explicit return schemas, rather than relying on a static hand‑coded ML library.
-- Robustness improvements — generated modules are validated; standardized outputs reduce schema/key mismatches across agents.
-- Broader model breadth — encourages more complex, diverse model families (linear/logistic, tree/ensemble, kernel, gradient boosting, optional probabilistic/neural) via uniform wrappers.
+- **New agent**: `Toolsmith` — understands dataset background and phase context to design domain-specific tools consumed by later stage agents(Planner and Developer), rather than relying on a static hand‑coded ML library.
+  -  **Multi-agent Collaboration**: `Toolsmith` joins the previous Five specialized agents (`Reader`, `Planner`, `Developer`, `Reviewer`, and `Summarizer`) to work together through phases.
+- Supports domain-specific Feature Engineering, EDA and data cleaning driven by data context.
+- Broader model breadth — encourages more complex, diverse model families generation (linear/logistic, tree/ensemble, kernel, gradient boosting, optional probabilistic/neural).
 - Model support — supports `gpt-4.1` for `Toolsmith`/`Planner`/`Developer`.
 - Example output is under EXAMPLE TOOLSMITH OUTPUT
 
