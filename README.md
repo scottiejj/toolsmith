@@ -1,4 +1,4 @@
-# Toolsmith
+# AutoKaggle-Toolsmith
 
 This repository is an adaptation of the original AutoKaggle paper: "AutoKaggle: A Multi-Agent Framework for Autonomous Data Science Competitions" (original repo: https://github.com/multimodal-art-projection/AutoKaggle).
 
@@ -7,12 +7,14 @@ This repository is an adaptation of the original AutoKaggle paper: "AutoKaggle: 
 </p>
 
 
-## Key Adaptations
+## Toolsmith Key Adaptations
 
-- New agent: `Toolsmith` — understands dataset background and phase context to design domain-specific tools and sklearn model wrappers with a uniform interface and explicit return schemas, rather than relying on a static hand‑coded ML library.
+- **New agent**: `Toolsmith` — understands dataset background and phase context to design domain-specific tools and sklearn model wrappers with a uniform interface and explicit return schemas, rather than relying on a static hand‑coded ML library.
 - Robustness improvements — generated modules are validated; standardized outputs reduce schema/key mismatches across agents.
 - Broader model breadth — encourages more complex, diverse model families (linear/logistic, tree/ensemble, kernel, gradient boosting, optional probabilistic/neural) via uniform wrappers.
 - Model support — supports `gpt-4.1` for `Toolsmith`/`Planner`/`Developer`.
+- Example output is under EXAMPLE TOOLSMITH OUTPUT
+
 
 ## AutoKaggle
 
@@ -24,7 +26,6 @@ AutoKaggle is a powerful framework that assists data scientists in completing da
 - **Comprehensive Reporting**: Detailed documentation of workflow and decision-making processes.
 
 
-### Example output under EXAMPLE TOOLSMITH OUTPUT
 
 ### Running
 
